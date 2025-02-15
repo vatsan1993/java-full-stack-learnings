@@ -1,0 +1,46 @@
+package com.examle.model;
+
+public class EMI {
+	private Double principalAmount;
+	private Integer numYears;
+	private Double annualInterestRate;
+	private Integer numEmi ;
+	public EMI(Double principalAmount,Integer numYears, Double annualInterestRate, Integer numEmi) {
+		super();
+		this.principalAmount = principalAmount;
+		this.numYears = numYears;
+		this.annualInterestRate = annualInterestRate;
+		this.numEmi = numEmi;
+	}
+	public EMI() {
+		super();
+	}
+	public Double getPrincipalAmount() {
+		return principalAmount;
+	}
+	public void setPrincipalAmount(Double principalAmount) {
+		this.principalAmount = principalAmount;
+	}
+	public Integer getNumYears() {
+		return numYears;
+	}
+	public void setNumYears(Integer numYears) {
+		this.numYears = numYears;
+	}
+	public Double getAnnualInterestRate() {
+		return annualInterestRate;
+	}
+	public void setAnnualInterestRate(Double annualInterestRate) {
+		this.annualInterestRate = annualInterestRate;
+	}
+	public Integer getNumEmi() {
+		return numEmi;
+	}
+	public void setNumEmi(Integer numEmi) {
+		this.numEmi = numEmi;
+	}
+	@Override
+	public String toString() {
+		return "EMI [principalAmount="+ principalAmount+", numYears=" + numYears + ", annualInterestRate=" + annualInterestRate + ", numEmi=" + numEmi + "]";
+	}
+}

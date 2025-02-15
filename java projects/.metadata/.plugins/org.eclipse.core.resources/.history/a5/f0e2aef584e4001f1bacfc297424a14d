@@ -1,0 +1,6 @@
+<h1>MY MVC Demo Application</h1>
+<hr />
+<nav>
+	<a href = "index.jsp" > Home</a>
+	<a href = "visitorInput.jsp">Visitor</a>
+</nav>

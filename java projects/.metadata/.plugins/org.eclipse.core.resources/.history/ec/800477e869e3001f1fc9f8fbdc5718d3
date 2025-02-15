@@ -1,0 +1,32 @@
+<!Doctype html>
+<html>
+	<head>
+		<title>My first Java Web</title>
+	</head>
+	<body>
+		<h2>My first Java Web</h2>
+		<form action="ws2">
+			<label> Enter User Name:
+				<input type = "text" name = "unm" />
+			</label>
+			<button>OK</button>
+			
+		</form>
+		
+		
+		<form action="arth" method="POST">
+			<label> Operand1:
+				<input type = "number" name = "n1" required />
+			</label>
+			<label> Operand2:
+				<input type = "number" name = "n2" required />
+			</label>
+			<button name="operation" value = "sum">ADD</button>
+			<button name="operation" value = "diff">SUBTRACT</button>
+			<button name="operation" value = "mul">MULTIPLY</button>
+			<button name="operation" value = "div">DIVIDE</button>
+			<button name="operation" value = "mod">MODULO</button>
+		</form>
+	</body>
+	
+</html>

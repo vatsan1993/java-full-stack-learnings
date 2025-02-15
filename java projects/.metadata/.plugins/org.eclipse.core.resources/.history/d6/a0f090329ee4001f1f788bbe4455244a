@@ -1,0 +1,7 @@
+package com.examle.model;
+
+public class EMI {
+	private Integer numYears;
+	private Double annualInterestRate;
+	private Integer numEmi ;
+}

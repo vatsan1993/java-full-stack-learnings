@@ -1,0 +1,29 @@
+<!Doctype html>
+<html>
+	<head>
+		<title>My first Java Web</title>
+	</head>
+	<body>
+		<h2>My first Java Web</h2>
+		<form action="ws2">
+			<label> Enter User Name:
+				<input type = "text" name = "unm" />
+			</label>
+			<button>OK</button>
+			
+		</form>
+		
+		
+		<form action="arth">
+			<label> Operand1:
+				<input type = "number" name = "n1" required />
+			</label>
+			<label> Operand1:
+				<input type = "number" name = "n2" required />
+			</label>
+			<button>ADD</button>
+		
+		</form>
+	</body>
+	
+</html>

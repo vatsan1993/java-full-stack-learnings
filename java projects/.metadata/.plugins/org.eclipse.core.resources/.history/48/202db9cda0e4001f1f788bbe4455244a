@@ -1,0 +1,5 @@
+package com.examle.service;
+
+public interface EMIService {
+
+}

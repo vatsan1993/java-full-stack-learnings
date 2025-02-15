@@ -1,0 +1,30 @@
+
+Feb 05, 2025 04:17:11.64 NEW SESSION
+Feb 05, 2025 04:17:11.67 Gtk-Message: 04:17:11.642: Failed to load module "xapp-gtk3-module"
+Feb 05, 2025 04:17:11.67 Gtk-Message: 04:17:11.644: Not loading module "atk-bridge": The functionality is provided by GTK natively. Please try to not load it.
+Feb 05, 2025 04:17:11.84 [3189630, Main Thread] WARNING: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:17:11.84 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.: 'glib warning', file /build/firefox/parts/firefox/build/toolkit/xre/nsSigHandlers.cpp:201
+Feb 05, 2025 04:17:11.84 
+Feb 05, 2025 04:17:11.84 (firefox:3189630): Gtk-WARNING **: 04:17:11.843: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:17:11.84 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.
+Feb 05, 2025 04:17:11.84 Gtk-Message: 04:17:11.843: Failed to load module "canberra-gtk-module"
+Feb 05, 2025 04:17:11.84 [3189630, Main Thread] WARNING: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:17:11.84 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.: 'glib warning', file /build/firefox/parts/firefox/build/toolkit/xre/nsSigHandlers.cpp:201
+Feb 05, 2025 04:17:11.84 
+Feb 05, 2025 04:17:11.84 (firefox:3189630): Gtk-WARNING **: 04:17:11.844: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:17:11.84 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.
+Feb 05, 2025 04:17:11.84 Gtk-Message: 04:17:11.844: Failed to load module "canberra-gtk-module"
+Feb 05, 2025 04:19:16.78 Gtk-Message: 04:19:16.780: Failed to load module "xapp-gtk3-module"
+Feb 05, 2025 04:19:16.78 Gtk-Message: 04:19:16.781: Not loading module "atk-bridge": The functionality is provided by GTK natively. Please try to not load it.
+Feb 05, 2025 04:19:17.11 [3203286, Main Thread] WARNING: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:19:17.11 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.: 'glib warning', file /build/firefox/parts/firefox/build/toolkit/xre/nsSigHandlers.cpp:201
+Feb 05, 2025 04:19:17.11 
+Feb 05, 2025 04:19:17.11 (firefox:3203286): Gtk-WARNING **: 04:19:17.116: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:19:17.11 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.
+Feb 05, 2025 04:19:17.11 Gtk-Message: 04:19:17.116: Failed to load module "canberra-gtk-module"
+Feb 05, 2025 04:19:17.12 [3203286, Main Thread] WARNING: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:19:17.12 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.: 'glib warning', file /build/firefox/parts/firefox/build/toolkit/xre/nsSigHandlers.cpp:201
+Feb 05, 2025 04:19:17.12 
+Feb 05, 2025 04:19:17.12 (firefox:3203286): Gtk-WARNING **: 04:19:17.122: GTK+ module /snap/firefox/5647/gnome-platform/usr/lib/gtk-2.0/modules/libcanberra-gtk-module.so cannot be loaded.
+Feb 05, 2025 04:19:17.12 GTK+ 2.x symbols detected. Using GTK+ 2.x and GTK+ 3 in the same process is not supported.
+Feb 05, 2025 04:19:17.12 Gtk-Message: 04:19:17.122: Failed to load module "canberra-gtk-module"

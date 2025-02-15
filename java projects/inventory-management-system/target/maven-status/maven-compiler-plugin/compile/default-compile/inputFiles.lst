@@ -1,0 +1,10 @@
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/dao/ConnectionFactory.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/dao/ItemDao.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/dao/ItemDaoJdbcImpl.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/entity/Item.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/exceptions/ImsException.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/service/ItemService.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/service/ItemServiceImpl.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/ui/Demo.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/ui/ImsApplication.java
+/home/vastan1993/Desktop/wellsforgo/java projects/inventory-management-system/src/main/java/com/example/ims/ui/Menu.java

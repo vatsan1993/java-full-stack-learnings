@@ -1,0 +1,36 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Visitor Input</title>
+</head>
+<body>
+	
+<%--	<% String msg = (String)request.getAttribute("msg"); %>
+	<% if(msg != null){ %>
+		<h2><%=msg %></h2>
+	<% } %>  --%>
+	
+	<h2>${msg}</h2>
+	<form action="visitor">
+		<label>Title 
+		<select name="title">
+				<option value="na">None</option>
+				<option value="dr">Dr.</option>
+				<option value="min">Hon. Minister</option>
+				<option value="prof">Professor</option>
+		</select>
+		</label> <br> <label>Full Name: <input type="text" name="fnm"
+			required /><br>
+		</label><br> <label> Gender</label><br>
+		 <label> <input type="radio"
+			name="gender" value="M" required /> Male
+		</label><br> <label><input type="radio" name="gender"
+			value="F" required /> Female
+		</label><br>
+		<button>OK</button>
+	</form>
+</body>
+</html>

@@ -1,0 +1,19 @@
+package com.example.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public class Address {
+	
+	@Column(name="dno", nullable = false)
+	private String doorNumber;
+	@Column(name="street", nullable = false)
+	private String street;
+	@Column(name="city", nullable=false)
+	private String city;
+	
+	
+	
+
+}

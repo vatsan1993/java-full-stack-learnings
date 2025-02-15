@@ -1,0 +1,18 @@
+package com.example.ui;
+
+import java.time.LocalDate;
+
+import com.example.entity.Employee;
+
+public class EmployeeApp {
+	public static void main(String[] args) {
+		Employee[] employees = new Employee[] {
+			new Employee(101L, "Vamsy", "Aripaka", 25000.0, LocalDate.now()),
+			new Employee(102L, "Srinu", "Dachepalli", 55000.0, LocalDate.now()),
+			new Employee(103L, "Suseela", "Aripaka", 35000.0, LocalDate.now()),
+			new Employee(104L, "Sagar", "Aripaka", 95000.0, LocalDate.now()),
+			new Employee(105L, "Indu", "Aripaka", 75000.0, LocalDate.now()),
+		};
+	}
+
+}

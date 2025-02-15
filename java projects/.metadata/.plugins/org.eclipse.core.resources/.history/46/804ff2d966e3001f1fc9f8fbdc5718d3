@@ -1,0 +1,61 @@
+package com.example;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/arth")
+public class ArithmeticServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public ArithmeticServlet() {
+        super();
+    }
+
+    @Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int num1, num2;
+		String val1 = request.getParameter("n1");
+		String val2 = request.getParameter("n2");
+		if(val1 == null || val2 == null) {
+			num1 = 10;
+			num2 = 20;
+		}else {
+			num1 = Integer.parseInt(val1);
+			num2 = Integer.parseInt(val2);
+		}
+		
+		String operation = request.getParameter("operation");
+		String result = "";
+		switch(operation) {
+			case "sum":
+				result = "Total: " + (num1 + num2);
+				break;
+			case "diff":
+				result = "Difference: " + (num1 - num2);
+				break;
+			case "mul":
+				result = "Multiplication: " + (num1 * num2);
+				break;
+			case "div":
+				result = "Division: " + (num1 / num2);
+				break;
+			case "mod":
+				result = "Remainder: " + (num1 % num2);
+				break;
+		}
+		
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<body>");
+		out.println("<h2> <strong>"+ result +"</h2>");
+		out.println("</body>");
+		out.println("</html>");
+	}
+}

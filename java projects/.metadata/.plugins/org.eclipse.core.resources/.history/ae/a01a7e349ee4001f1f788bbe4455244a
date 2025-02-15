@@ -1,0 +1,36 @@
+package com.examle.model;
+
+public class EMI {
+	private Integer numYears;
+	private Double annualInterestRate;
+	private Integer numEmi ;
+	public EMI(Integer numYears, Double annualInterestRate, Integer numEmi) {
+		super();
+		this.numYears = numYears;
+		this.annualInterestRate = annualInterestRate;
+		this.numEmi = numEmi;
+	}
+	public EMI() {
+		super()
+	}
+	public Integer getNumYears() {
+		return numYears;
+	}
+	public void setNumYears(Integer numYears) {
+		this.numYears = numYears;
+	}
+	public Double getAnnualInterestRate() {
+		return annualInterestRate;
+	}
+	public void setAnnualInterestRate(Double annualInterestRate) {
+		this.annualInterestRate = annualInterestRate;
+	}
+	public Integer getNumEmi() {
+		return numEmi;
+	}
+	public void setNumEmi(Integer numEmi) {
+		this.numEmi = numEmi;
+	}
+	
+	
+}

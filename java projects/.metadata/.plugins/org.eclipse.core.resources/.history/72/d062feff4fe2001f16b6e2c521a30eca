@@ -1,0 +1,60 @@
+package com.example.td.testing;
+
+// non-static import
+// import static org.junit.jupiter.api.Assertions;
+// 
+// static import
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import  com.example.td.service.NumericOperations;
+
+class NumericOperationsTest {
+	NumericOperations numOpt;
+	@BeforeEach
+	void init() {
+		numOpt = new NumericOperations();
+	}
+
+	@AfterEach
+	void cleanUp() {
+		numOpt = null;
+	}
+	
+	@Test
+	@DisplayName("Testing isPrime method for prime numbers to return true")
+	@Disabled
+	void isPrimeTest_forPrimes() {
+//		if we are using non static imports.
+//		Assertions.assertTrue(NumericOperations.isPrime(5));
+//		if we are using static imports.
+		assertTrue(numOpt.isPrime(7));
+		assertTrue(numOpt.isPrime(11));
+		assertTrue(numOpt.isPrime(13));
+	}
+	
+	
+	@Test
+	@DisplayName("Testing isPrime method for non prime numbers to return false")
+	@Disabled
+	void isPrimeTest_forNotPrimes() {
+		assertFalse(numOpt.isPrime(8));
+		assertFalse(numOpt.isPrime(10));
+		assertFalse(numOpt.isPrime(1024));
+	}
+
+	@ParameterizedTest
+	@ValueSource(ints = {7, 11, 13, 107, 97})
+	@DisplayName("Testing isPrime method for prime numbers to return true")
+	void isPrimeTest_forPrimes2(int num) {
+//		if we are using non static imports.
+//		Assertions.assertTrue(NumericOperations.isPrime(5));
+//		if we are using static imports.
+		assertTrue(numOpt.isPrime(num));
+	}	
+}

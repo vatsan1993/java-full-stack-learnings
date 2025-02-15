@@ -1,0 +1,37 @@
+package com.example.ui;
+
+import java.time.LocalDate;
+
+import com.example.entity.Item;
+
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
+public class ImsApp {
+	public static void main(String[] args) {
+		createItems();
+	}
+	
+	public static void createItems() {
+//		Integer icode, String title, LocalDate packageDate, 
+//		Boolean fragile, String unit, Integer costPrice,
+//		Integer sellingPrice
+		Item[] items = {
+				new Item(101, "Laptop", LocalDate.now(), false, "Piece", 200, 750),
+				new Item(102, "Book", LocalDate.now(), false, "Piece", 50, 100),
+				new Item(103, "Pen", LocalDate.now(), false, "Piece", 10, 20),
+				new Item(104, "Lamp", LocalDate.now(), false, "Piece", 25, 100),
+				new Item(105, "Mobile", LocalDate.now(), false, "Piece", 120, 699),
+				new Item(106, "Keyboard", LocalDate.now(), false, "Piece", 50, 250),
+				new Item(107, "Tablet", LocalDate.now(), false, "Piece", 150, 400),
+				new Item(108, "Pen", LocalDate.now(), false, "Box of 10", 80, 195),
+				new Item(109, "Lamp", LocalDate.now(), false, "Box of 10", 230, 1000),
+				new Item(110, "Mouse", LocalDate.now(), false, "Box of 10", 310, 1150),
+		};
+		
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqlPU");
+		
+		
+		
+	}
+}

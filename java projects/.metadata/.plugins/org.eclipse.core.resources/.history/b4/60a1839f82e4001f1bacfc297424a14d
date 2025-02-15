@@ -1,0 +1,42 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Visitor Input</title>
+</head>
+<body>
+	
+<%--	<% String msg = (String)request.getAttribute("msg"); %>
+	<% if(msg != null){ %>
+		<h2><%=msg %></h2>
+	<% } %>  --%>
+	
+	<c:choose>
+		<c:when test="${msg != null }"><h2>${msg }</h2></c:when>
+		<c:otherwise><h2>Welcome! Somebody</h2></c:otherwise>
+	</c:choose>
+	
+	<%-- <h2>${msg}</h2> --%>
+	<form action="visitor">
+		<label>Title 
+		<select name="title">
+				<option value="na">None</option>
+				<option value="dr">Dr.</option>
+				<option value="min">Hon. Minister</option>
+				<option value="prof">Professor</option>
+		</select>
+		</label> <br> <label>Full Name: <input type="text" name="fnm"
+			required /><br>
+		</label><br> <label> Gender</label><br>
+		 <label> <input type="radio"
+			name="gender" value="M" required /> Male
+		</label><br> <label><input type="radio" name="gender"
+			value="F" required /> Female
+		</label><br>
+		<button>OK</button>
+	</form>
+</body>
+</html>

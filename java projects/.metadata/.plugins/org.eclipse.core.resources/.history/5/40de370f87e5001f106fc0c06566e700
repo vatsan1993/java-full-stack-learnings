@@ -1,0 +1,51 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="header.jsp"></jsp:include>
+
+<c:choose>
+	<c:when test="${items == null} ">
+		<p>No Items found</p>
+	</c:when>
+	<c:when test="${items.isEmpty()} ">
+		<p>All items deleted</p>
+	</c:when>
+	<c:otherwise>
+		<h3>Items</h3>
+		<table>
+			<tr>
+				<th>Icode</th>
+				<th>Title</th>
+				<th>Is Fragile</th>
+				<th>Package Date</th>
+				<th>Unit</th>
+				<th>Cost Price</th>
+				<th>Selling Price</th>
+				<th> </th>
+				<th> </th>
+				
+			</tr>
+		<c:forEach var="item" items="${ items }">
+			<tr>
+				<td>Icode</td>
+				<td>Title</td>
+				<td>Is Fragile</td>
+				<td>Package Date</td>
+				<td>Unit</td>
+				<td>Cost Price</td>
+				<td>Selling Price</td>
+			</tr>
+		</c:forEach>
+		</table>
+	</c:otherwise>
+</c:choose>
+
+</body>
+</html>

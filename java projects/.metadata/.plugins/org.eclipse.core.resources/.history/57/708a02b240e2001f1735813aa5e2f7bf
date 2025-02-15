@@ -1,0 +1,16 @@
+package com.example.td.testing;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import com.example.td.service.NumericOperations;
+
+class NumericOperationsTest {
+
+	@Test
+	void isPrimeTest() {
+//		Assertions.assertTrue(NumericOperations.isPrime(5));
+		
+	}
+
+}

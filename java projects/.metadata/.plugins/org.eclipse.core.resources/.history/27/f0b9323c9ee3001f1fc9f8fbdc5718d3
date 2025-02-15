@@ -1,0 +1,32 @@
+package com.example.service;
+
+import java.time.LocalTime;
+
+import com.example.model.VisitorModel;
+
+public class VisitorServiceImpl {
+	public String greet(VisitorModel vistorModel) {
+		String result = "";
+		
+		int h = LocalTime.now().getHour();
+		if(h >= 4 && h < 12) {
+			result = "Good Morning";
+		} else if(h >= 12 && h <= 16) {
+			result = "Good Noon";
+		} else {
+			result = "Good Evening";
+		}
+		
+		if("na".equals(vistorModel.getTitle())) {
+			if("M".equals(vistorModel.getGender())) {
+				result += "Mr.";
+			}else {
+				result += "Miss.";
+			}
+		} else {
+			result += vistorModel.getTitle();
+		}
+		
+		return result;
+	}
+}

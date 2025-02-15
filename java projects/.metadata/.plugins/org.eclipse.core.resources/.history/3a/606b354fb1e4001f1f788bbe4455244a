@@ -1,0 +1,46 @@
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="header.jsp"></jsp:include>
+	
+	<form action="calculate-emi">
+		<label>
+			Principal Amount: 
+			<input type="number" name="principal" min="1" />
+		</label><br>
+		
+		<label>
+			Annual Interest Rate: 
+			<input type="number" name="interest" min="0.01" step="0.01"/>
+		</label><br>
+		<label>
+			Number of EMIs: 
+			<input type="number" name="numEmis" />
+		</label> <br>
+		<button>OK</button>
+	</form>
+	
+	<c:choose>
+		<c:when test="${empty emis}">
+			<p>No Data Available</p>
+		</c:when>
+		<c:otherwise>
+			<h3>Old Calculations</h3>
+			<ul>
+				<c:forEach  var="emi" items="${ emis }">
+					<li>${emi }</li>
+				</c:forEach>
+			</ul>
+		</c:otherwise>
+	</c:choose>
+	
+</body>
+</html>

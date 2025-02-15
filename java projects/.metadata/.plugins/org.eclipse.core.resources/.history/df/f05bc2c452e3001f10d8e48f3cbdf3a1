@@ -1,0 +1,14 @@
+<!Doctype html>
+<html>
+	<head>
+		<title>My first Java Web</title>
+	</head>
+	<body>
+		<h2>My first Java Web</h2>
+		<form action="ws2">
+			<input type = "text" name = "unm" />
+			
+		</form>
+	</body>
+	
+</html>

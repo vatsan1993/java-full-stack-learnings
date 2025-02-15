@@ -1,0 +1,13 @@
+package com.example.td.testing;
+
+import org.junit.jupiter.api.Test;
+
+class NumericOperationsTest {
+
+	@Test
+	void isPrimeTest() {
+		
+		
+	}
+
+}

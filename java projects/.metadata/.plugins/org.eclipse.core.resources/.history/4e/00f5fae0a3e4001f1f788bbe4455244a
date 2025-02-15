@@ -1,0 +1,7 @@
+package com.examle.service;
+
+import com.examle.model.EMI;
+
+public interface EMIService {
+	public Double calculateEmi(EMI emi) ;
+}

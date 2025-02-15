@@ -1,0 +1,40 @@
+package com.example.td.testing;
+
+// non-static import
+// import static org.junit.jupiter.api.Assertions;
+// 
+// static import
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import  com.example.td.service.NumericOperations;
+
+class NumericOperationsTest {
+
+	@Test
+	void isPrimeTest_forPrimes() {
+//		if we are using non static imports.
+//		Assertions.assertTrue(NumericOperations.isPrime(5));
+		
+//		if we are using static imports.
+		NumericOperations numOpt = new NumericOperations();
+		assertTrue(numOpt.isPrime(7));
+		assertTrue(numOpt.isPrime(11));
+		assertTrue(numOpt.isPrime(13));
+		assertTrue(numOpt.isPrime(141));
+		
+	}
+	
+	
+	@Test
+	void isPrimeTest_forNotPrimes() {
+
+		NumericOperations numOpt = new NumericOperations();
+		assertFalse(numOpt.isPrime(8));
+		assertFalse(numOpt.isPrime(10));
+		assertFalse(numOpt.isPrime(1024));
+		
+		
+	}
+
+}

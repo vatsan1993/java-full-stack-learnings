@@ -1,0 +1,91 @@
+package com.example.ui;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Scanner;
+
+import com.example.entity.Employee;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+
+public class EmployeeApp {
+	public static Scanner scanner = new Scanner(System.in);
+	public static void main(String[] args) {
+//		createEmployees();
+//		getEmployee();
+		getMultipleEmployees();
+		
+	}
+	
+	public static void getMultipleEmployees() {
+//		persistenceUnitName - mysqlPU
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqlPU");
+		EntityManager em = emf.createEntityManager();
+		
+		String qryText = "SELECT e FROM Employee e";
+		Query empQuery = em.createQuery(qryText);
+//		TypedQuery<Employee> empQuery = em.createQuery(qryText,Employee.class);
+		
+		List<Employee> emps = empQuery.getResultList();
+		
+		for(Employee emp : emps) {
+			System.out.println(emp);
+		}
+		em.close();
+	}
+	
+	
+	public static void getEmployee() {
+		boolean shallContinue = true;
+//		persistenceUnitName - mysqlPU
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqlPU");
+		EntityManager em = emf.createEntityManager();
+		
+		while(shallContinue) {
+			System.out.println("Enter employee id:");
+			long empId = scanner.nextLong();
+			
+			Employee emp = em.find(Employee.class, empId);
+			if(emp != null) {
+				System.out.println(emp.getFirstName() + " "+ emp.getLastName());
+			}else {
+				System.out.println("Emp not Found");
+			}
+			
+			System.out.println("Continue? (true/false): ");
+			shallContinue = scanner.nextBoolean();
+		}
+		
+		em.close();
+		
+	}
+	
+	public static void createEmployees() {
+		Employee[] employees = new Employee[] {
+				new Employee(101L, "Vamsy", "Aripaka", 25000.0, LocalDate.now()),
+				new Employee(102L, "Srinu", "Dachepalli", 55000.0, LocalDate.now()),
+				new Employee(103L, "Suseela", "Aripaka", 35000.0, LocalDate.now()),
+				new Employee(104L, "Sagar", "Aripaka", 95000.0, LocalDate.now()),
+				new Employee(105L, "Indu", "Aripaka", 75000.0, LocalDate.now()),
+			};
+//			persistenceUnitName - mysqlPU
+			EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqlPU");
+			EntityManager em = emf.createEntityManager();
+			// transaction is better to create transaction if there are multiple insert or update.
+			EntityTransaction txn = em.getTransaction();
+			// starting transaction
+			txn.begin();
+			for(Employee emp: employees) {
+				// inserting employee
+				em.persist(emp);
+				System.out.println("Employee is saved!");
+			}
+			txn.commit();
+			em.close();
+	}
+}

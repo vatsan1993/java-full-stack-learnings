@@ -1,0 +1,157 @@
+package com.example.ims.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.ims.entity.Item;
+import com.example.ims.exceptions.ImsException;
+
+public class ItemDaoJdbcImpl implements ItemDao {
+    public static final String INS_ITEM_QRY =
+    "Insert into items(icode, title, packageDate, fragile, unit, costPrice, sellingPrice) values(?,?,?,?,?,?,?)";
+    public static final String UPD_ITEM_QRY =
+    "update items set title=?, packageDate=?, fragile=?, unit=?, costPrice=?, sellingPrice=? where icode=?";
+    public static final String DEL_ITEM_QRY =
+    "delete from items where icode=?";
+    public static final String SEL_ITEM_BY_ID_QRY =
+    "select title, packageDate, fragile, unit, costPrice, sellingPrice from items where icode=?";
+    public static final String SEL_ALL_ITEM_QRY =
+    "select icode, title, packageDate, fragile, unit, costPrice, sellingPrice from items";
+    @Override
+    public Item addItem(Item item) throws ImsException {
+        // TODO Auto-generated method stub
+
+        if(item != null){
+            try(
+                Connection conn  = ConnectionFactory.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(INS_ITEM_QRY);
+            ){
+                //  these are to replace the ? in the query
+                stmt.setInt(1, item.getIcode());
+                stmt.setString(2, item.getTitle());
+                // item.getPackageDate() returns LocalDate, but the query expects java.sql.Date so we convert it as follows.
+                stmt.setDate(3, java.sql.Date.valueOf(item.getPackageDate()));
+                stmt.setBoolean(4, item.getFragile());
+                stmt.setString(5, item.getUnit());
+                stmt.setDouble(6, item.getCostPrice());
+                stmt.setDouble(7, item.getSellingPrice());
+                // execute Update returns an int representing number of rows affected.
+                stmt.executeUpdate();
+                // conn.commit(); // if autocommit is false
+            }catch(SQLException e){
+                throw new ImsException("adding an item failed!");
+            }
+        }
+
+        return item;
+    }
+
+    @Override
+    public Item save(Item item) throws ImsException {
+        if(item != null){
+            try(
+                Connection conn  = ConnectionFactory.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(UPD_ITEM_QRY);
+            ){
+                //  these are to replace the ? in the query
+
+                stmt.setString(1, item.getTitle());
+                // item.getPackageDate() returns LocalDate, but the query expects java.sql.Date so we convert it as follows.
+                stmt.setDate(2, java.sql.Date.valueOf(item.getPackageDate()));
+                stmt.setBoolean(3, item.getFragile());
+                stmt.setString(4, item.getUnit());
+                stmt.setDouble(5, item.getCostPrice());
+                stmt.setDouble(6, item.getSellingPrice());
+                stmt.setInt(7, item.getIcode());
+                // execute Update returns an int representing number of rows affected.
+                stmt.executeUpdate();
+                // conn.commit(); // if autocommit is false
+            }catch(SQLException e){
+                throw new ImsException("adding an item failed!");
+            }
+        }
+
+        return item;
+    }
+
+    @Override
+    public boolean deleteById(Integer icode) throws ImsException {
+        boolean isDeleted = false;
+        try(
+            Connection conn  = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(DEL_ITEM_QRY);
+        ){
+            //  these are to replace the ? in the query
+            stmt.setInt(1, icode);
+            int deleteCount = stmt.executeUpdate();
+            if (deleteCount > 0 ){
+                isDeleted = true;
+            }
+            // conn.commit(); // if autocommit is false
+        }catch(SQLException e){
+            throw new ImsException("deleting an item failed!");
+        }
+        return isDeleted ;
+    }
+
+    @Override
+    public Item getById(Integer icode) throws ImsException {
+        Item item = null;
+        try (
+            Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(SEL_ITEM_BY_ID_QRY);
+        ){
+            stmt.setInt(1, icode);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                item = new Item();
+                item.setIcode(icode);
+                item.setTitle(rs.getString("title"));
+                item.setPackageDate(rs.getDate("packageDate").toLocalDate());
+                item.setFragile(rs.getBoolean("fragile"));
+                item.setUnit(rs.getString("unit"));
+                item.setCostPrice(rs.getDouble("costPrice"));
+                item.setSellingPrice(rs.getDouble("sellingPrice"));
+
+            }
+
+        } catch (SQLException e) {
+            throw new ImsException("Unable to get item by id");
+        }
+        return item;
+    }
+
+    @Override
+    public List<Item> getAll() throws ImsException {
+        // TODO Auto-generated method stub
+        List<Item> items = new ArrayList<>();
+        try(
+            Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(SEL_ALL_ITEM_QRY);
+            ResultSet rs = stmt.executeQuery();
+        ) {
+            while(rs.next()){
+                Item item = new Item();
+                item.setIcode(rs.getInt("icode"));
+                item.setTitle(rs.getString("title"));
+                item.setPackageDate(rs.getDate("packageDate").toLocalDate());
+                item.setFragile(rs.getBoolean("fragile"));
+                item.setUnit(rs.getString("unit"));
+                item.setCostPrice(rs.getDouble("costPrice"));
+                item.setSellingPrice(rs.getDouble("sellingPrice"));
+                items.add(item);
+            }
+            if(items.isEmpty()){
+                items = null;
+            }
+        } catch (SQLException e) {
+            throw new ImsException("Unable to get all items");
+        }
+        return items;
+    }
+
+}
