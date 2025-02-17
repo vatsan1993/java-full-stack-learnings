@@ -1251,8 +1251,158 @@ Course is the inverse side (it uses `mappedBy`):
 ### Best Practice
 Always define the `@JoinTable` on one side only (typically the more "logical" or commonly accessed entity) and use `mappedBy` on the other side to avoid redundant table definitions and maintain proper bidirectional relationships.
 
+# Spring
+-----------
+Spring is a Java EE Development Platform
+String Provides a lot of modules(around 16-17). Also provides dev tools for development, packaging, deployment more trackable.
+
+1. Multi-Modularized - Spring is divided into multiple modules.
+	spring core
+	spring web mvc
+	spring Test
+	spring Data
+	spring Boot
+	Sting Security.
+	Spring ORM
+	spring AOP
+	spring AspectJ
+	spring Portlets
+	spring Cloud
+	-------- etc
+	We will mainly concentrate on core, web mvc, Test, Data, Boot, Security, Spring ORM
+	we dont need to load entire string platform. we include only the necessary ones in the project. Saves memory.
+2. Cross-platform - Will be discussed later.
+3. pluggable - If we want to use a third party library which is better than Spring modules, we can include it in the project. Its not restricted to spring packages.
+For Example insteads of using Spring MVC we can use Struts.
+4. Light weight - As we have multi modularity for spring, it is lightweight.
+
+Spring is a light weight DI container.
+container is some software that can handle the lifecycle of a java object. The java object lifecycle is being managed by the container are called java beans.
+DI- Dependncy Injection
+This is why we call it a development platform instead of calling a library or a package.
 
 
+Dependency (Functional Dependency)
+-------------------------------
+If a piece of software is dependent on another software to achieve a task, then they are functionally dependent.
+In the multi later architecture that we used till now, each layer is dependent on the other layer. For Example, Controller is dependent on Service layer was dependent on the DAO layer.
+
+For example:
+<code>
+	interface StudenttDAO
+	class StudentJdbcDAOImpl implements StudenttDAO{
+		-------------JDBC implementation-----------
+	}
+	class StudentJpaDAOImpl implements StudenttDAO{
+		-------------JPA with hibernate implementation-----------
+	}
+	interface StudentService
+	class StudentServiceImpl implements StudentService{
+		StudenttDAO dao;
+		public StudentServiceImpl(){
+			//dao = new StudentJdbcDAOImpl();
+			dao - new StudentJdbcDAOImpl();
+		}
+	}
+</code>
+
+As we can see from the example when we add new implementation like jpa implementation for the project we need to update service layer aswell.
+If a real world project is being converted from jdbc to jpa, we make changes in every service which is hard to keep track of and very time consuming.
+This is where Dependency Injection comes in.
 
 
+Dependency Injection
+--------------------
+Instead of creating a new DAO object we can pass it as a parameter to the Service class and the controller will be responsible for creating the DAO object. 
+The main goal here is that we should not modify the Service layer classes.
+ This creates a separation of concern. No matter which dao we pass into the Service, the service will perform the operation. The service does not specifically know which dao its working with.As we have the interface for the dao, the jdbc and the jpa implementations will have the same methods and the service simply calls it. Depending on which object is injected into the Service class the way that the task is achieved will differ but service does not care about it.
+<code>
+	interface StudenttDAO
+	class StudentJdbcDAOImpl implements StudenttDAO{
+		-------------JDBC implementation-----------
+	}
+	class StudentJpaDAOImpl implements StudenttDAO{
+		-------------JPA with hibernate implementation-----------
+	}
+	interface StudentService
+	class StudentServiceImpl implements StudentService{
+		StudenttDAO dao;
+		public StudentServiceImpl(StudenttDAO dao){
+			this.dao = dao;
+		}
+	}
+	class Controller{
+		// dependency injection by constuctor.
+		// StudentService studentService = new StudentServiceImpl(new StudentJdbcDAOImpl());
+		StudentService studentService = new StudentServiceImpl(new StudentJpaDAOImpl());
+	}
+</code>
+
+we can create the dependency injection using 
+1. constructor injection
+2. setter injection - using setter method. very similar to constructor injection
+3. field injection - using java reflection classes
+
+The above options are called IoC(Inversion of control). until now, the controller called service and the service called the dao. now the controller creates a dao and passes it to service the action is reversed.
+
+Instead of creating these IoCs manually, we will use Spring IoC Container which automates the process
+
+Spring IoC Container:
+--------------------
+2 main containers
+BeanFactory
+ApplicationContext
+
+Using these 2 we can configure the application in way that when we provide details of which dependencies are required, spring will automatically create the bean object with all the dependency injections performed on the beans.
+For the BeanFactory or the ApplicationContect we specify the number of classes we have in the project, All the dependencies they have. Then the BeanFactory or the application context will create the object necessary for us with all the injections necessary. 
+To tell about the  classes and dependencies to the Spring we use the config files.
+The we can simply use the pre created object provided by the Spring.
+
+The configurations are for number of beans and the dependencies needed are to be provided in "Bean Definition Configuration"
+
+Bean Definition Configuration
+-----------------------------
+We can create Bean Definition Configuration in 3 ways
+XML based Config
+Annotation Based configuration
+Java Based Configuration
+
+We need to learn all three configurations as XML based config, we might get it in interviews.
+
+XML Based Bean Config
+----------------------
+We can call this with any name. for simplicity, we will call it beans.XML
+
+
+<beans>
+	<bean id=""
+			class=""
+			score=""
+			init-method=""
+			destroy-method=""
+			autowired ="">
+		<constuctor-arg index= "" value="" ref="" />
+		<propery name="" value="" ref="" />
+	</bean>
+
+</beans>
+
+
+We will have a beans root element. Inside it, we will have bean element with an id property to refer to the bean in java.
+then we will have a class attribute which is the fully qualified name of the class foe which we want to create a bean.
+we will talk about score attribute later.
+possible values for score attribute are singleton, prototype, request, session, global-session.
+the method provided in the init-method attribute will be called each time the bean object is created. Similarly, the method provided in the destroy-method attribute will be called each time the bean object is destroyed.
+autowired contains values non,byType, byName, byConstructor.
+We will talk about this later
+inside this bean element we will be able to inject another bean object. This can be done by using 
+constructor-arg - used for constructor injection
+propery - used for setter injections
+
+our bean.xml will look something like this
+
+
+Example:
+spring-core-demo-xml project
+needed dependency: spring core for dependency injection, spring context for containers.
 
