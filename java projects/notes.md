@@ -1277,10 +1277,11 @@ For Example insteads of using Spring MVC we can use Struts.
 4. Light weight - As we have multi modularity for spring, it is lightweight.
 
 Spring is a light weight DI container.
-container is some software that can handle the lifecycle of a java object. The java object lifecycle is being managed by the container are called java beans.
+container is some software that can handle the lifecycle of a java object. The java object lifecycle is being managed by the container are called beans.
 DI- Dependncy Injection
 This is why we call it a development platform instead of calling a library or a package.
 
+Note: java beans and beans.xml are not the same. beans.xml file is used for inversion of control will the dependency injection.
 
 Dependency (Functional Dependency)
 -------------------------------
@@ -1404,5 +1405,81 @@ our bean.xml will look something like this
 
 Example:
 spring-core-demo-xml project
+Step1:
 needed dependency: spring core for dependency injection, spring context for containers.
+pom.xml file:
+<code>
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>spring-core-demo-xml</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>SpringCoreDemoXml</name>
+  
+  <properties>
+  	<spring-version>6.2.2</spring-version>
+  </properties>
+  
+  
+  <dependencies>
+  		<!--For Dependency injection-->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+		<!--Provides spring containers-->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+  </dependencies>
+ 
+</project>
+
+</code>
+
+Step 2:
+We have simple project where we created which uses the doWelcome service to display a welcome message . Now how do we make it in a way that the spring will create this instead?
+We create a xml file that will store the spring beans config. In this case we create beans1.xml in the resources folder.
+This xml will have the beans element and the bean element inside it like we learnt above.
+
+bean1.xml
+<code>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	    <!-- Define a service bean -->
+	    <bean id="wsb" class="com.example.service.WelcomeServiceStandarImpl" />
+	</beans>
+</code>
+
+
+
+Note: if there is an error in eclipse saying that unable to download external files, go to window ->preferences -> XML(Wild Web Developer)
+Then enable download external resources (xsd,..)
+
+Note: the bean definition class attribute should not have .java at the end.
+
+Step3:
+Using the bean file we created:
+In the WelcomeApplication1.java file, we will create ApplicationContext object.
+ApplicationContext is an interface. There are many implementations for it and we can use one of it. in  this case, we will use ClassPathXmlApplicationContext class to create the object. weneed to provide the name of the xml file to this.
+
+<code>
+	ApplicationContext context = new ClassPathXmlApplicationContext("beans1.xml");
+</code>
+This will create a container called context. It we read all the bean definition in the beans1.xml and pulls the beans from the there.
+
+Step4:
+Now we can use the context object to create a WebService object. The context object contains a getBean method to which we provide id of the bean we provided in the bean configuration.
+
+<code>
+
+</code>
+
 

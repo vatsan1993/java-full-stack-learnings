@@ -8,7 +8,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
+		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="bean"/>
 			<item value="insert"/>
 			<item value="jpql"/>
 		</list>

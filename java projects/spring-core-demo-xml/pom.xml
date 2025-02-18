@@ -5,5 +5,28 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>SpringCoreDemoXml</name>
   
+  <properties>
+  	<spring-version>6.2.2</spring-version>
+  </properties>
+  
+  
+  <dependencies>
+  		<!--For Dependency injection-->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+		
+		<!--Provides spring containers-->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+		
+  </dependencies>
  
 </project>
