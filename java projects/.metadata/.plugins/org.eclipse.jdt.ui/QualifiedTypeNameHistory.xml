@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="com.example.model.EMI"/>
-    <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="com.example.service.EMIService"/>
     <fullyQualifiedTypeName name="com.example.controller.EMIServlet"/>
     <fullyQualifiedTypeName name="com.example.service.EMIServiceImpl"/>
@@ -55,9 +53,11 @@
     <fullyQualifiedTypeName name="com.example.entity.Employee"/>
     <fullyQualifiedTypeName name="jakarta.persistence.CascadeType"/>
     <fullyQualifiedTypeName name="jakarta.persistence.TypedQuery"/>
-    <fullyQualifiedTypeName name="com.example.service.WelcomeService"/>
     <fullyQualifiedTypeName name="com.example.service.WelcomeServiceStandarImpl"/>
     <fullyQualifiedTypeName name="org.springframework.context.ApplicationContext"/>
     <fullyQualifiedTypeName name="org.springframework.context.support.ClassPathXmlApplicationContext"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="com.example.service.WelcomeService"/>
+    <fullyQualifiedTypeName name="com.example.service.WelcomeServiceEnhancedImpl"/>
+    <fullyQualifiedTypeName name="java.time.LocalTime"/>
 </qualifiedTypeNameHistroy>

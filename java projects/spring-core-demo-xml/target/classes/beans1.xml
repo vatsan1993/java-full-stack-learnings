@@ -7,6 +7,19 @@
 
     <!-- Define a service bean -->
     <bean id="wsb" class="com.example.service.WelcomeServiceStandarImpl" />
-
+	<!--<bean id="wsab1" class="com.example.service.WelcomeServiceAdvancedImpl" >
+		<property name="welcomeMessage" value="Namasthey! Please come!" />
+	</bean>-->
+	<bean id="wsab1" class="com.example.service.WelcomeServiceAdvancedImpl" >
+		<constructor-arg index="0" value="Namasthey! Please come!" />
+	</bean>
+	
+	<bean id="mp" class="com.example.service.MessageProviderImpl" >
+	</bean>
+	<bean id="wseb1" class="com.example.service.WelcomeServiceEnhancedImpl" >
+		<constructor-arg index="0" ref="mp" />
+		<!--<property name="msgProvider" value="Namasthey! Please come!" />-->
+	</bean>
+	
 </beans>
  

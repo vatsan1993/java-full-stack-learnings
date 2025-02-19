@@ -3,6 +3,12 @@
 table names are plural
 
 # maven
+Create Maven project
+
+Maven Dependencies
+
+
+
 
 # JDBC:
 
@@ -1476,10 +1482,145 @@ ApplicationContext is an interface. There are many implementations for it and we
 This will create a container called context. It we read all the bean definition in the beans1.xml and pulls the beans from the there.
 
 Step4:
-Now we can use the context object to create a WebService object. The context object contains a getBean method to which we provide id of the bean we provided in the bean configuration.
+Now we can use the context object to create a WelcomeService object. The context object contains a getBean method to which we provide id of the bean we provided in the bean configuration. 
 
 <code>
+	WelcomeService ws = (WelcomeService) context.getBean("wsb");
+	System.out.println(ws.doWelcome("Srivatsan"));
+</code>
+At this level we dont have any dependency in the project, so what we created with the beans does not help us a lot.
+So let create a bit more advanced implementation. Will create WelcomeServiceAdvancedImpl.java which wil implement the WelcomeService interface.
+
+
+<code>
+	package com.example.service;
+	public class WelcomeServiceAdvancedImpl implements WelcomeService {
+		private String welcomeMessage;
+		public WelcomeServiceAdvancedImpl() {	
+		}
+		public WelcomeServiceAdvancedImpl(String welcomeMessage) {
+			this.welcomeMessage = welcomeMessage;
+		}
+		@Override
+		public String doWelcome(String userName) {
+			// TODO Auto-generated method stub
+			return welcomeMessage + userName;
+		}
+		public String getWelcomeMessage() {
+			return welcomeMessage;
+		}
+		public void setWelcomeMessage(String welcomeMessage) {
+			this.welcomeMessage = welcomeMessage;
+		}
+	}
+</code>
+
+we can see that this service is ready for constructor injection and setter injection.
+Now we will see how we can use spring for injecting the welcome message.
+
+To do this, we need to create a bean element in the bean1.xml
+The new bean object will have id and the class for the new class.
+As the class needs parameter in the setter method, we need to create a property tag which has name and value attributes.
+the name attribute tells the name of the parameter and the value tell the value to the parameter that we want to inject.
+
+<code>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    https://www.springframework.org/schema/beans/spring-beans.xsd">
+	    <!-- Define a service bean -->
+	    <bean id="wsb" class="com.example.service.WelcomeServiceStandarImpl" />
+		<bean id="wsab1" class="com.example.service.WelcomeServiceAdvancedImpl" >
+			<property name="welcomeMessage" value="Namasthey! Please come!" />
+		</bean>
+	</beans>
+</code>
+
+To Use the constructor injections we have to use the constructor-arg tab instead.
+it has 2 attributes. 
+1 index - index tell which value does 
+2 value - the value we are injecting.
+
+<code>
+	<bean id="wsab1" class="com.example.service.WelcomeServiceAdvancedImpl" >
+		<constructor-arg index="0" value="Namasthey! Please come!" />
+	</bean>
+</code>
+
+
+Note: The Service class should have both default and parameterized constructor. If not, the setter injection will not work.
+
+Normally we will try to inject DAO into Service . Like we learn in previous topics. Now how do we inject a dao into the service using spring?
+We will be injecting one bean into another bean.
+
+The current example does not use a dao directly. but we will see and example of of how to inject one bean into another.
+WE create a MessageProvider interface and implement it with the MessageProviderImpl.
+
+<code>
+	package com.example.service;
+
+import java.time.LocalTime;
+
+public class MessageProviderImpl implements MessageProvider{
+	@Override
+	public String getMessage() {
+		String message = null;
+		int h = LocalTime.now().getHour();
+		if(h>=4 && h<=11) {
+			message = "Good Morning";
+		}else if(h >= 12 && h <= 16) {
+			message = "Good AfterNoon";
+		}else {
+			message = "Good Evening";
+		}	
+		return message;
+	}
+}
+	
 
 </code>
+
+
+Then we create a WelcomeServiceEnhancedImpl which gets the MessageProvider injected into it.
+
+<code>
+	package com.example.service;
+
+public class WelcomeServiceEnhancedImpl implements WelcomeService {
+	private MessageProvider msgProvider;
+	public WelcomeServiceEnhancedImpl() {
+	}
+	public WelcomeServiceEnhancedImpl(MessageProvider msgProvider) {
+		this.msgProvider = msgProvider;
+	}
+	@Override
+	public String doWelcome(String userName) {
+		// TODO Auto-generated method stub
+		return msgProvider.getMessage() +  " "+ userName;
+	}
+	public MessageProvider getMsgProvider() {
+		return msgProvider;
+	}
+	public void setMsgProvider(MessageProvider msgProvider) {
+		this.msgProvider = msgProvider;
+	}
+
+}
+	
+</code>
+Now its time to create the beans for MessageProviderImpl and WelcomeServiceEnhancedImpl and link them.
+To link two beans we need to provide the ref attribute of the constructor-arg of WelcomeServiceEnhancedImpl the ref attribute gets the id of the MessageProvideImpl bean. we can also create property element if we want to make use of the setter injection.
+
+<code>
+	<bean id="mp" class="com.example.service.MessageProviderImpl" >
+	</bean>
+	<bean id="wseb1" class="com.example.service.WelcomeServiceEnhancedImpl" >
+		<constructor-arg index="0" ref="mp" />
+		<!--<property name="msgProvider" value="Namasthey! Please come!" />-->
+	</bean>
+</code>
+
+If we take a look at the main method. Most of the code is pretty much the same except for the name of the bean we are using. This creates separation of concern.
 
 

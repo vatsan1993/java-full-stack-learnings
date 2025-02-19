@@ -19,6 +19,14 @@ public class WelcomeApplication1 {
 		WelcomeService ws = (WelcomeService) context.getBean("wsb");
 		System.out.println(ws.doWelcome("Srivatsan"));
 		
+		
+		WelcomeService ws2 = (WelcomeService) context.getBean("wsab1");
+		System.out.println(ws2.doWelcome("Srivatsan"));
+		
+		WelcomeService ws3 = (WelcomeService) context.getBean("wseb1");
+		System.out.println(ws3.doWelcome("Srivatsan"));
+		
+		
 	}
 
 }
