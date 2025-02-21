@@ -1623,4 +1623,56 @@ To link two beans we need to provide the ref attribute of the constructor-arg of
 
 If we take a look at the main method. Most of the code is pretty much the same except for the name of the bean we are using. This creates separation of concern.
 
+Scope:
+-------
+Controls how the objects are created when we request a bean. It tells if we create a bean each time a bean is created or not. 
+Singeton, prototype, request, session, global-session
+request, session, global-session can be used only when we use we create a web appication.
+Lets look at Singeton, prototype for now.
+
+If we use a Singleton scope it only one bean is created and the same bean is shared each time a request is made. If its a prototype, then it gives a bean each time we request.
+
+We create a bean2.xml file for this. Will have
+
+<code>
+	<bean id="wsab" class="com.example.service.WelcomeServiceAdvancedImpl" >
+		<property name="welcomeMessage" value = "Namasthey! Please come!" />
+	</bean>
+</code>
+
+We can change the data in the bean using the java program aswell.
+In our WelcomeApplication2, we type cast the WecomeService to WelcomeServiceAdvancedImplimentation to get access to the setWelcomeMessage() message.
+<code>
+	// changing the parameter value of the bean using java.
+		((WelcomeServiceAdvancedImpl ) ws).setWelcomeMessage("Hello");
+		System.out.println(ws.doWelcome("Srivatsan"));	// Hello Srivatsan
+		// requesting the same bean again
+		WelcomeService ws2 = (WelcomeService) context.getBean("wsab");
+		System.out.println(ws2.doWelcome("Srivatsan")); // Hello Srivatsan
+</code>
+
+after changing the parameter of the bean, we are trying to request the bean again.
+so now will it give the same bean as the first one with the modified parameter or will it give us a new bean without any modification?
+the answer for this is it will give us the bean with the modified parameter.
+This is because the defautl scope for the bean is Singleton.
+But we can change this by setting the scope parameter 
+
+We create the bean3.xml which has the same exact bean with same bean config scope set to prototype.
+We can then see the how things change.
+<code>
+	<bean id="wsabProto" class="com.example.service.WelcomeServiceAdvancedImpl" scope="prototype" >
+		<property name="welcomeMessage" value = "Namasthey! Please come!" />
+	</bean>
+</code>
+
+
+if we use the scope with request as its value ,for each request made by the client to the web web app, a new bean will be created. 
+if it is set to session a new bean will be created when a new session is created.
+if we use global-session, the bean will be maintained for the whole servlet context.
+We will do that when we work with Spring  MVC.
+
+Auto Wiring:
+-----------
+
+
 

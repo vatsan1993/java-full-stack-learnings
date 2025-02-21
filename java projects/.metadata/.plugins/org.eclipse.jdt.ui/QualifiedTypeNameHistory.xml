@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="com.example.service.EMIService"/>
     <fullyQualifiedTypeName name="com.example.controller.EMIServlet"/>
     <fullyQualifiedTypeName name="com.example.service.EMIServiceImpl"/>
     <fullyQualifiedTypeName name="java.time.LocalDateTime"/>
@@ -60,4 +59,5 @@
     <fullyQualifiedTypeName name="com.example.service.WelcomeService"/>
     <fullyQualifiedTypeName name="com.example.service.WelcomeServiceEnhancedImpl"/>
     <fullyQualifiedTypeName name="java.time.LocalTime"/>
+    <fullyQualifiedTypeName name="com.example.service.WelcomeServiceAdvancedImpl"/>
 </qualifiedTypeNameHistroy>
