@@ -1673,6 +1673,314 @@ We will do that when we work with Spring  MVC.
 
 Auto Wiring:
 -----------
+Wiring: injecting dependency into appropriate place.
+We will create the beans. But injecting the beans happens automatically even if it is not configured properly to constructor or setter injection.
+Auto wiring is none by default.
 
+Can be done in 3 ways.
+byName 
+	if id="bean1" depends on id="bean2"
+	bean1 must have a parameter in the code by name bean2
+	try to inject using constructor/setter if constructor is not available
+byType 
+	if id="bean1" depends on id="bean2"
+	bean1 must have a parameter whose data type matches the type of bean2's type
+	try to inject using constructor/setter if constructor is not available
+constructor.
+	try to inject using constructor by type
+
+Let create bean4.xml contains the mp bean and the wseb bean from the bean1.xml.
+But now we dont provide any property for the wseb
+
+<code>
+	<bean id="mp" class="com.example.service.MessageProviderImpl" >
+	</bean>
+	<bean id="wseb" class="com.example.service.WelcomeServiceEnhancedImpl" />
+	
+</code>
+
+If we now use this bean in the main method, we will get an null pinter excepption. This is because, by default the  property is null.
+
+<code>
+	ApplicationContext context = new ClassPathXmlApplicationContext("beans4.xml");
+	WelcomeService ws = (WelcomeService) context.getBean("wseb");
+	System.out.println(ws.doWelcome("Srivatsan"));
+</code>
+
+To fix this, we use the autowire property for the bean that will receive the other bean as parameter.
+
+
+<code>
+	<!--byType-->
+	<bean id="mp" class="com.example.service.MessageProviderImpl" >
+	</bean>
+	<bean id="wseb" class="com.example.service.WelcomeServiceEnhancedImpl" autowire="byType" />
+</code>
+
+here we cannot use the byName as the criteria for name is not matching. We will be using byType. Will will look at the byName next.
+
+We need to made use that the id of the MessageProviderImpl bean matches the parameter of the WelcomeServiceEnhancedImpl constructor or setter.
+
+<code>
+	<!--byName-->
+	<bean id="msgProvider" class="com.example.service.MessageProviderImpl" >
+	</bean>
+	<bean id="wseb" class="com.example.service.WelcomeServiceEnhancedImpl" autowire="byName" />
+</code>
+This is also in bean4.xml
+
+ 
+Collection Injections:
+-----------------------
+How to inject a collection (list, set)
+We cannot use the same approach as earlier.
+We have a list tag and a set tag available  which we can put inside the property tag.
+the list tag will have a bunch of value tags inside it.
+
+<code>
+	<bean id="b1" class="MyBean">
+		<property name="sts">
+			<list>
+				<value>s1</value>
+				<value>s2</value>
+				<value>s3</value>
+				<value>s4</value>
+			</list>
+		</property>
+	</bean>
+</code>
+
+Note: this might seem not feasible to have hundreds of values. This is just for interviews. Not for actual development.
+
+
+To inject a set we simply replace the list tag to set
+
+For maps, we need an entry tag that contains key and value as attributes
+
+ <code>
+	<bean id="b1" class="MyBean">
+		<property name="sts">
+			<list>
+				<entry key="k1" value="10"/>
+				<entry key="k2" value="20"/>
+				<entry key="k3" value="30"/>
+			</list>
+		</property>
+	</bean>
+</code>
+
+Examples are not in files.
+if the values inside the list are not primitive, we can use a ref tag inside the list tag
+
+<code>
+    <!-- Define Notification Channel Beans -->
+    <bean id="emailNotification" class="com.example.EmailNotification"/>
+    <bean id="smsNotification" class="com.example.SmsNotification"/>
+    <bean id="slackNotification" class="com.example.SlackNotification"/>
+    <!-- Inject the List of Channels into the NotificationService -->
+    <bean id="notificationService" class="com.example.NotificationService">
+        <property name="channels">
+            <list>
+                <ref bean="emailNotification"/>
+                <ref bean="smsNotification"/>
+                <ref bean="slackNotification"/>
+            </list>
+        </property>
+    </bean>
+</code>
+
+Annotation based configuration:
+--------------------------------
+We will not use any xml. instead will be use java annotations.
+<bean id="b1" class="..." scope="prototype"> can be done by using Component annotation which is same as bean tag . we can provide an id to it. the scope attribute has a Scope annotation. These apply on a calss.
+<code>
+	@Component("b1")	
+	@Scope("prototype")
+	public class MyBean{
+	}
+<code>
+if id is not provided, then the class name becomes the id.
+
+Field Annotations
+@Autowired annotation will be applied on field, it does field injection . if applied on constructor, performs constructor injection. if applied on setter, performs constructor injection.
+
+@Qualifier("name") - autowire byName. Needs to be written along with the Autowired annotation. if not specified, its autowired by type. which is the best way to autowire.
+
+
+@Value("") - Appinjecting premitive values. Also supports spring expression language.
+
+We need to specify what package needs to be scanned to find where these annotations are applied and we need to have a configuration. we need to have @Configuration and @ComponentScan on a configuration class that we will be building.
+
+<code>
+	@Configuration
+	@ComponentScan("package that has ourComponent")
+	public class MyConfiguration{
+	}
+</code>
+
+Note: if we dont mention the package the @Components will not be loaded.
+
+
+The component annotation does not tell us what king of bean it is. so we have the following annotations that tells what kind of bean it is.
+if our bean is not any one of @Service, @Repository @Controller @RestController @Resourcem then we use @Component.
+@Component
+	@Service - all services
+	@Repository -- all daos
+	@Controller -- all controllers
+	@RestController - all rest controllers
+	@Resource - all resources.
+
+Project1:
+spring-core-demo-annot
+
+We copied the xml project and deleted all xml files and extra classes with main methods.
+
+Now we create a config class in the com.example.config
+<code>
+	package com.example.config;
+	import org.springframework.context.annotation.ComponentScan;
+	import org.springframework.context.annotation.Configuration;
+	@Configuration
+	@ComponentScan("com.example.service")
+	public class MyConfig {
+	}
+	
+</code>
+
+WE update the MessageProviderImpl with the @Component as it is not exactly a service or a dao.
+
+<code>
+	----
+	import org.springframework.stereotype.Component;
+	@Component
+	public class MessageProviderImpl implements MessageProvider{
+		@Override
+		public String getMessage() {
+			-----
+		}
+	}
+	
+</code>
+
+for each service we provide @Service
+For injecting primitive values, we use the Value annotation
+For autowiring, we use @Autowired
+
+Now to use this in the main method, we need to make some changed. instead of 
+ApplicationContext context = new ClassPathXmlApplicationContext("beans1.xml");
+we use
+ApplicationContext context = new AnnotationConfigApplicationContext(MyConfig.class);
+
+
+Pros and Cons of Annotation based config:
+----------------------------------------
+pros:
+No need xml config.
+Easier.
+
+Cons:
+in xml config the beans can be created for classes created by us or for class that are in a package that we got from the internet. as we simply need to create a bean file with the qualifying name of the class.
+We cannot do this with the annotations based conig as these annotations has to be written inside the classes and we will not have access to the classes if we use jar files that we download.
+
+To fix this we use java based config
+
+Java Based Configuration:
+------------------------
+It is an  to Annotation based config.
+we can create beans using java inside the Configuration class. this can be done by using the @Bean
+
+for example:
+
+<code>
+	@Configuration
+	@ComponentScan("package that has ourComponent")
+	public class MyConfiguration{
+		@Bean
+		@Scope("prototype")
+		public LocalDate today(){
+			return LocalDate.now();
+		}
+		@Bean
+		public Scanner scan(){
+			return new Scanner(System.in);
+		}
+	}
+</code>
+
+The name of the method becomes the if and the return type becomes the qualifying classname if we write the same thing in xml bean.
+
+
+usage in main:
+<code>
+	System.out.println(context.getBean("today"));
+</code>
+
+
+Spring Expression Language
+-------------------------
+We need a new dependency for this.
+
+<code>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context</artifactId>
+	    <version>${spring-version}</version>
+	</dependency>
+</code>
+
+We use @Value for primitive value. It can also accept a spring expression language , evaluate it and provide appropriate values to inject.
+Always has a format of @Value("#{bean}") or @Value("#{bean.property}")
+
+if a bean is available in the config class and if we want to inject it as a parameter to a method, we can use this.
+
+for example:
+we had the getMessage() in the MessageProviderImpl, which uses a LocalTime object.
+<code>
+public String getMessage() {
+		String message = null;
+		int h = LocalTime.now().getHour();
+		...
+}	
+</code>
+Instead of doing so, we can use the exression language like this.
+<code>
+	@Component
+	@Scope("prototype")
+	public class MessageProviderImpl implements MessageProvider{
+		@Value("#{today.hour}")
+		private int h;
+		@Override
+		public String getMessage() {
+			String message = null;
+			if(h>=4 && h<=11) {
+				message = "Good Morning";
+			}else if(h >= 12 && h <= 16) {
+				message = "Good AfterNoon";
+			}else {
+				message = "Good Evening";
+			}	
+			return message;
+		}
+	}
+		
+
+</code>
+
+if the method has it as parameter we can apply the Value annotation for the parameter.
+
+Property File Injection
+-----------------------
+Instead of using @Value("Hello! Welcome!") for a field, which is basically meaningless we can read a .properties file and set it to the field.
+lets create a .properties file in the resources folder which will have  key value pair 
+checkout application.properties
+
+To use the properties 
+we need to use @PropertySource("fileName") on the configuration class
+
+To use it
+<code>
+	@Value("#{'${welcome.message}'}")
+	private String welcomeMessage;
+</code>
 
 

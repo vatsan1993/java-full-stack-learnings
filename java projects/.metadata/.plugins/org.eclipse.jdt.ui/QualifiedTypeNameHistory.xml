@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="com.example.controller.EMIServlet"/>
     <fullyQualifiedTypeName name="com.example.service.EMIServiceImpl"/>
-    <fullyQualifiedTypeName name="java.time.LocalDateTime"/>
     <fullyQualifiedTypeName name="java.time.Duration"/>
     <fullyQualifiedTypeName name="javax.naming.InitialContext"/>
     <fullyQualifiedTypeName name="javax.naming.NamingException"/>
@@ -60,4 +58,6 @@
     <fullyQualifiedTypeName name="com.example.service.WelcomeServiceEnhancedImpl"/>
     <fullyQualifiedTypeName name="java.time.LocalTime"/>
     <fullyQualifiedTypeName name="com.example.service.WelcomeServiceAdvancedImpl"/>
+    <fullyQualifiedTypeName name="java.time.LocalDateTime"/>
+    <fullyQualifiedTypeName name="org.springframework.context.annotation.PropertySource"/>
 </qualifiedTypeNameHistroy>
