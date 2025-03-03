@@ -10,6 +10,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value=".properties"/>
 			<item value="Mapped"/>
 			<item value="Ma"/>
 			<item value="handler"/>

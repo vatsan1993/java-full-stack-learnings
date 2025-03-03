@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectWizardLocationPage">
 		<list key="location">
+			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/spring-web-mvc-demo1"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/car-enquiry"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/jpa-hibernate-demo-6"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/jpa-hibernate-demo-5"/>
@@ -47,14 +48,17 @@
 	</section>
 	<section name="MavenProjectWizardArtifactPage">
 		<list key="groupId">
+			<item value="com.exampe"/>
 			<item value="com.example"/>
 		</list>
 		<list key="name">
+			<item value="spring-web-mvc-demo"/>
 			<item value="spring-web-mvc-demo1"/>
 			<item value="SpringCoreDemoXml"/>
 			<item value="JpaHibernateDemo5"/>
 		</list>
 		<list key="artifactId">
+			<item value="spring-web-mvc-demo"/>
 			<item value="spring-web-mvc-demo1"/>
 			<item value="spring-core-demo-xml"/>
 			<item value="jpa-hibernate-demo7"/>

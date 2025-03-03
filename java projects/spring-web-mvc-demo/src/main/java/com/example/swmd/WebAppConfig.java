@@ -13,7 +13,7 @@ public class WebAppConfig implements WebApplicationInitializer{
 	@Override
 	public void onStartup(javax.servlet.ServletContext servletContext) throws javax.servlet.ServletException {
 		// TODO Auto-generated method stub
-AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
+		AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
 		
 		// registering the config cass
 		webCtx.register(SpringWebMvcDemoConfig.class);

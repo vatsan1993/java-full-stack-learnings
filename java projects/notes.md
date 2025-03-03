@@ -1,3 +1,6 @@
+# Installing spring tools suit
+
+
 # sql
 
 table names are plural
@@ -2052,69 +2055,38 @@ We can use more than 1 resourceViewResolver.
 We can give a priority to specific viewResolvers and based on that a specific resolver will be chosen 
 This can be done by using a property order.
 
-Project Name: spring-web-mvc-demo1
+Project Name: spring-web-mvc-demo
 Project Setup:
 maven project with war packaging
-
+note: Spring 6.2.2 did not work properly for us. we were not able to reach the url properly so we used 5.1.3.RELEASE
 1 Setup pom.xml file
 <code>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example</groupId>
-  <artifactId>spring-web-mvc-demo1</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <name>spring-web-mvc-demo1</name>
-  <properties>
+<properties>
   	<java-version>1.8</java-version>
-  	<spring-version>6.2.2</spring-version>
+  	<spring-version>5.1.3.RELEASE</spring-version>
   </properties>
+  
   <dependencies>
-  	<!--For Dependency injection-->
-	<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-core</artifactId>
-	    <version>${spring-version}</version>
-	</dependency>
-	<!--Provides spring containers-->
-	<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-context</artifactId>
-	    <version>${spring-version}</version>
-	</dependency>
-	<!--Spring Expression language-->
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-expression</artifactId>
-	    <version>${spring-version}</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
-	<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
-	<dependency>
-	    <groupId>jakarta.servlet</groupId>
-	    <artifactId>jakarta.servlet-api</artifactId>
-	    <version>6.0.0</version>
-	    <scope>provided</scope>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
-	<dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>jstl</artifactId>
-	    <version>1.2</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-web</artifactId>
-	    <version>${spring-version}</version> <!-- or any compatible version -->
-	</dependency>
+  	<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-webmvc</artifactId>
-	    <version>${spring-version}</version> 
-	</dependency
+	    <version>${spring-version}</version>
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>3.0.1</version>
+	    <scope>provided</scope>
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+	    <artifactId>jstl</artifactId>
+	    <version>1.2</version>
+	</dependency>
   </dependencies>
+  
+  
   <!--Buid plan-->
   <build>
   	<finalName>SpringWEbMvcDemo</finalName>
@@ -2145,7 +2117,7 @@ maven project with war packaging
   		</plugins>
   	</pluginManagement>
   </build>
-</project>
+  
 </code>
 
 Step 2:
@@ -2163,20 +2135,19 @@ WebAppConfig - web app related config - this is the startup of our project. we n
 	// WebAppConfig
 	package com.example.swmd;
 
+import javax.servlet.ServletRegistration;
+
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRegistration;
+
 
 // equivalent to  web.xml
 public class WebAppConfig implements WebApplicationInitializer{
 	@Override
-	public void onStartup(jakarta.servlet.ServletContext servletContext) throws jakarta.servlet.ServletException {
-		// Application context was an interface and AnnotationConfigWebApplicationContext
-		// is one of its implementation specifically for web applications		 
-		AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
+	public void onStartup(javax.servlet.ServletContext servletContext) throws javax.servlet.ServletException {
+		// TODO Auto-generated method stub
+AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
 		// registering the config cass
 		webCtx.register(SpringWebMvcDemoConfig.class);
 		// associating web application context with servlet context
@@ -2205,6 +2176,7 @@ public class WebAppConfig implements WebApplicationInitializer{
 		 *  </servlet-mapping>
 		 * 	</servlet>
 		 *  </webapp>*/
+		
 //		Providing custom name for the dispatcher servlet.
 		ServletRegistration.Dynamic servlet =
 				servletContext.addServlet("dispatcher", new DispatcherServlet(webCtx));
@@ -2212,8 +2184,8 @@ public class WebAppConfig implements WebApplicationInitializer{
 //		mapping all requests to the dispatcher servlet.
 		servlet.addMapping("/"); // the / and /* are considered as same.
 	}
-
 }
+
 </code>
 
 The WebAppConfig can be simlified by a tool which will learn later.
@@ -2221,31 +2193,32 @@ The WebAppConfig can be simlified by a tool which will learn later.
 <code>
 	//SpringWebMvcConfig
 	package com.example.swmd;
-	import org.springframework.context.annotation.Bean;
-	import org.springframework.context.annotation.ComponentScan;
-	import org.springframework.context.annotation.Configuration;
-	import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-	import org.springframework.web.servlet.view.InternalResourceViewResolver;
-	@Configuration
-	@ComponentScan("com.example.swmd")
-	@EnableWebMvc
-	//public class SpringWebMvcDemoConfig implements WebMvcConfigurationSupport {
-	// we dont need to perform the implementation as we have the @EnableMcv
-	public class SpringWebMvcDemoConfig  {
-		// SimleUrlHandlerMapping is used by default. we just need to configure the viewResolver
-		// We will use InternalReourceViewResover.
-		// As its not a bean that we are creating, we need to set it here
-		@Bean
-		public InternalResourceViewResolver viewResolver() {
-			InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-			//setting prefix and suffix
-			viewResolver.setPrefix("/views/");
-			viewResolver.setSuffix(".jsp");
-			// setting priority - if there are multiple resolvers
-			viewResolver.setOrder(1);
-			return viewResolver;
-		}
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+@Configuration
+@ComponentScan("com.example")
+@EnableWebMvc
+//public class SpringWebMvcDemoConfig implements WebMvcConfigurationSupport {
+// we dont need to perform the implementation as we have the @EnableMcv
+public class SpringWebMvcDemoConfig  {
+	// SimleUrlHandlerMapping is used by default. we just need to configure the viewResolver
+	// We will use InternalReourceViewResover.
+	// As its not a bean that we are creating, we need to set it here
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		//setting prefix and suffix
+		viewResolver.setPrefix("/views/");
+		viewResolver.setSuffix(".jsp");
+		// setting priority - if there are multiple resolvers
+		viewResolver.setOrder(1);
+		return viewResolver;
 	}
+}
+
 </code>
 
 Step 3: Creating a controller
@@ -2258,13 +2231,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
-@RequestMapping(value="/home")
+
 public class DefaultController {
 	// maps to 
 	// localhost:9090/spring-web-mvc-demo1
 	// localhost:9090/spring-web-mvc-demo1/
 	// localhost:9090/spring-web-mvc-demo1/home
-	@GetMapping("/test")
+	@RequestMapping(value= {"", "/", "/home"}, method = RequestMethod.GET)
 	public String getName() {
 		// return the view name 
 		// the view needs to be placed in the folder specified in the viewResolver
@@ -2279,12 +2252,136 @@ public class DefaultController {
 </code>
 
 creating jsp file:
-
+The jsp pages needs to be in views folder as we are using a view resolver which tries to get the files that are available in the views folder of the webapps folder
 <code>
-
+	<html>
+		<head>
+			<title>My Spring Web</title>
+		</head>
+		<body>
+			<h1>Welcome Home!</h1>
+		</body>
+	</html>
 </code>
 
 
+Spring Boot:
+-------------
+It is a Spring module that automates the standard configuration.
+In the Spring MVC Project we had to create web application initializer, dispatcher servet, route alll the urls to the dispatcher servlet, we had to create web application context and servlet context and link them together, we had to create view resolver just to setup the project properly.
+To reduce this we use the Spring boot.
+It has special spring boot dependencies instead of normal dependencies.
+We get automated standard configurations for any spring related modules(spring-mvc, spring-security,...). We dont need to waste time on managing all the configurations.
+
+Along with auto config, we get a new feature called embedded server.
+We dont need to have an external server anymore like tomcat. spring boot comes with its own server. we need to provide which port number the server should use.
+
+Annotations available for spring boot.
+@SpringBootApplication - This is same as using #Configuration, @EnableAutoConfiguration, @ComponentScan
+
+Project:spring-web-mvc-boot-demo
+Step1 Create a Spring Starter Project.
+This will show a dialog to configure all the details related to the project.
+change name, group id, artifact id, 
+set the engine to Maven, change java version if you like,
+the version is auto selected in the next page.
+WE simply add the Spring web package for now and click finish.
+
+Alternately we can create a starter project at  https://start.spring.io/
+We can also use spring boot cli to create the project.
 
 
+When we open the pom.xml file,
+we see a parent tag which show which project is the parent project.
+The parent project contains a lot of config and it is all abstracted away.
 
+the main dependencies that we have now are
+spring-boot-starter-web.
+tomcat - brings all servlet apis.
+spring-boot-starter-test (for testing the application).
+
+also we have spring-boot-maven-plugin for creating the war files.
+
+jstl is not automatically included so we set that up.
+
+We can see that there is ServletInitializer.java and SpringWebMvcBootDemoApplication.java which are auto generated for us and these the only necessary config files in our project. 
+We dont need to modify these.
+we can see the SpringWebMvcBootDemoApplication class has a @SpringBootApplication which makes it a Spring boot application and it has a main method similar to our console applications.
+We can run this application and it can run on the embedded server and if needed, we can run it on our own server that we want.
+
+Spring boot also automates the view resolvers. But we need to specify the prefixes and suffixres.
+
+If we remeber from spring demo project, we had to specify the package that needs to be scanned. But there we dont need to do that. the entire package in which  @SpringBootApplication is defined, that package will be scanned automatically.
+
+all the daos, controller needs to be sub packages of the current com.example package.
+We need to use the annotations similar to spring @Controller, @Service @Entity and so on
+
+Step 2: Creating a controller . This is not the front controller. Front controller is auto configured for us.
+<code>
+// default controller
+package com.example.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+public class DefautlController {
+	@RequestMapping(value = {"", "/", "/home"}, method = RequestMethod.GET)
+	public String homeAction() {
+		return "home";
+	}
+}
+
+</code>
+Step 3: Building a jsp page
+we create a jsp page inside a folder called pages.
+<code>
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	</head>
+	<body>
+		<h1>Welcome Home!</h1>
+	</body>
+	</html>
+</code>
+
+Step4: Configure Prefixes and suffixes for the view resolver.
+This done in the application.properties file which is generated for us inside the resources folder at the time of creating the project. the project automatically reads this file when we run the project.
+
+<code>
+	server.port=7777
+	spring.application.name=spring-web-mvc-boot-demo
+	spring.mvc.view.prefix=/pages/
+	spring.mvc.view.suffix=.jsp
+</code>
+
+Note: application name already existed. Along with the prefix and suffix, we also added the port number for the server.
+
+Step5: We need to make sure the spring boot recognizes the jsp files and render them instead of simply downloading it. when we visit the server.
+We need to include jasper engine dependency in pom.xml 
+jasper is a jsp processing engine.
+in google search tomcat embedded jasper maven
+
+<code>
+	<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
+	<dependency>
+	    <groupId>org.apache.tomcat.embed</groupId>
+	    <artifactId>tomcat-embed-jasper</artifactId>
+	    <version>11.0.1</version>
+	</dependency>
+		
+</code
+
+Run as spring boot application.
+The app should run and it should say that sever is running at port 7777
+visit localhost:7777/
+no need to use project name.
+
+The problem with the internal server is, if any changed are made, we need to stop the application and run it again.
+we can also use a developer dependency in the pom.xml to run the embedded server with live reload. We will look at this later.
