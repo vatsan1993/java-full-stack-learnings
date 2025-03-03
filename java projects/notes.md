@@ -155,19 +155,15 @@ javax.servlet
 	ServletConfig
 	ServletRequest
 	ServletResponse
-	
 	Abstact Class
 	GenericServlet
 	
 javax.servlet.http
 	HttpServlet extends GenericServlet
-	
 	HttpServletResponse
 	HttpServletRequest
-	
 	Cookie
 	HttpSession
-	
 	RequestDispatcher
 	
 Web Project Structure
@@ -1982,5 +1978,313 @@ To use it
 	@Value("#{'${welcome.message}'}")
 	private String welcomeMessage;
 </code>
+
+
+Spring Web MVC
+------------
+Used to develop Model View Controller.
+Helps to Standardize the web application development so the whole team can concentrate on the task instead of worrying about the architecture of the app.
+
+It contains tools to made project with almost 0 configurations.
+
+In a MVC application with single front controller, it does not mean that there will be only one controller inthe whole app.
+
+WE can have any number of controllers and there will be one front controller that use one of the other controllers that are available
+DAO1 <--Model--> SERVICE1<--Model--> Controller1
+DAO2 <--Model--> SERVICE2<--Model--> Controller2
+DAO3 <--Model--> SERVICE3<--Model--> Controller3 <--Model & viewName--> FrontController <---->clients
+DAO4 <--Model--> SERVICE4<--Model--> Controller4							 ↓ ↑
+DAO5 <--Model--> SERVICE5<--Model--> Controller5 							 Model
+																			 ↓ ↑
+																			 View
+
+
+Client = Browser
+View = JSP/HTML + js + CSS
+Front Controller = DispatcherServlet. Accepts any request that comes from the client. url("/*")
+Service = validations and business logic
+DAO = DAtabase Entity.
+Controller = Any java class(POJO) that has a method that handes a request. Such methods are called actions.
+The action must return a viewName or model or both .
+
+
+
+DispatcherServlet
+Receives any request from the client and forwards the request to corresponding controller
+This corresponding controller performs the action necessary and returns viewName and model to the DispatcherServlet.
+The Dispatcher Servlet will then return the view to the client.
+
+We need to setup a bean file for this aswell.
+
+How does we map a url to a non from controller or an action?
+A non front Controller will have actions related to one specific url.
+We can use something called HandlerMapping (an interface) in spring to tell the Dispatcher Servlet know where the incoming request needs to be forwarded to.
+
+There are 3 ways we can implement the handler mapping
+1. SimpleUrlHandlerMapping - Default Url mapping.
+	@RequestMapping - helps to map a url to a controller and to an action in the controller.
+2. BeanNameUrlhandlerMapping 
+	if the incoming request url has the bean name of a controller, then that controller is passes with that request. We will not use this as it is not possible to create a controller for each request separately.
+
+3. ControllerNameUrlHandlerMapping (deprecated)
+
+
+How does the viewName mapped to a specific view?
+DisplaycherServlet uses a ViewRolver(interface) for this. 
+
+ViewRolver has the following implementations
+1. InternalResourceViewResolver
+	has 2 properties suffix and prefix
+	we use a formula here where pathOfAview = prefix + viewName + suffix
+	For example
+	lets say
+	suffix = .JSP
+	prefix = /WEB-INF/pages/
+	viewName = home
+	pathOAView = /WEB-INF/pages/home.jsp
+2. ResourceBundleViewResollver
+	we create a .properties file that has pathofTheView and the viewName
+3. XmlResourceViewResolver
+	we create a .xml that contains the mappings to viewname and pathName
+
+
+We can use more than 1 resourceViewResolver.
+We can give a priority to specific viewResolvers and based on that a specific resolver will be chosen 
+This can be done by using a property order.
+
+Project Name: spring-web-mvc-demo1
+Project Setup:
+maven project with war packaging
+
+1 Setup pom.xml file
+<code>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>spring-web-mvc-demo1</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>spring-web-mvc-demo1</name>
+  <properties>
+  	<java-version>1.8</java-version>
+  	<spring-version>6.2.2</spring-version>
+  </properties>
+  <dependencies>
+  	<!--For Dependency injection-->
+	<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-core</artifactId>
+	    <version>${spring-version}</version>
+	</dependency>
+	<!--Provides spring containers-->
+	<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context</artifactId>
+	    <version>${spring-version}</version>
+	</dependency>
+	<!--Spring Expression language-->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-expression</artifactId>
+	    <version>${spring-version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+	<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+	<dependency>
+	    <groupId>jakarta.servlet</groupId>
+	    <artifactId>jakarta.servlet-api</artifactId>
+	    <version>6.0.0</version>
+	    <scope>provided</scope>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>jstl</artifactId>
+	    <version>1.2</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-web</artifactId>
+	    <version>${spring-version}</version> <!-- or any compatible version -->
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-webmvc</artifactId>
+	    <version>${spring-version}</version> 
+	</dependency
+  </dependencies>
+  <!--Buid plan-->
+  <build>
+  	<finalName>SpringWEbMvcDemo</finalName>
+  	<pluginManagement>
+  		<plugins>
+  			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
+			    <configuration>
+			    	<source>${java-version}</source>
+			    	<target>${java-version}</target>
+			    </configuration>
+			</plugin>
+
+  			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-dependency-plugin</artifactId>
+			    <version>3.1.1</version>
+			    <configuration>
+			    	<warSourceDirectory>src/main/webapp</warSourceDirectory>
+			    	<warName>SpringWebMvcExample</warName>
+			    	<failOnMissingWebXml>false</failOnMissingWebXml>
+			    </configuration>
+			</plugin>
+  		</plugins>
+  	</pluginManagement>
+  </build>
+</project>
+</code>
+
+Step 2:
+Configure DispatcherServlet (front controller)
+Its a servlet that spring automatically provides. We need to send all the requests to the dispatcher servlet and we have to load it into our context.
+To configure the DispatcherServlet, we cannot use as its already provided by spring.
+We can use something called Web adapter.
+We also need to create Spring bean configuration class.
+
+So we need to create 2 config classes for this in our project
+SpringWebMvcDemoConfig - Spring related config
+WebAppConfig - web app related config - this is the startup of our project. we need to create the web application adapter, create web application context and load the adapter into the context.
+
+<code>
+	// WebAppConfig
+	package com.example.swmd;
+
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRegistration;
+
+// equivalent to  web.xml
+public class WebAppConfig implements WebApplicationInitializer{
+	@Override
+	public void onStartup(jakarta.servlet.ServletContext servletContext) throws jakarta.servlet.ServletException {
+		// Application context was an interface and AnnotationConfigWebApplicationContext
+		// is one of its implementation specifically for web applications		 
+		AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
+		// registering the config cass
+		webCtx.register(SpringWebMvcDemoConfig.class);
+		// associating web application context with servlet context
+		// web app context managed by spring
+		// servlet context is managed by tomcat.
+		// this merges both of them so that we can use it as one single context.
+		webCtx.setServletContext(servletContext);
+		//		if we use wen xml
+		/*
+		 * <web-app>
+		 * 	<servlet>
+		 * 	<servlet-name>
+		 * 		dispatcher
+		 *  </servlet-name>
+		 *  <servlet-class>
+		 *  	org.springframework.web.servlet.DispatcherServlet
+		 *  </servlet-class>
+		 *  <load-on-startup>1</load-onstartup>
+		 *  <servlet-mapping>
+		 *  	<servlet-name>
+		 * 			dispatcher
+		 *  	</servlet-name>
+		 *  	<url-pattern>
+		 *  		/
+		 *  	</url-pattern>
+		 *  </servlet-mapping>
+		 * 	</servlet>
+		 *  </webapp>*/
+//		Providing custom name for the dispatcher servlet.
+		ServletRegistration.Dynamic servlet =
+				servletContext.addServlet("dispatcher", new DispatcherServlet(webCtx));
+		servlet.setLoadOnStartup(1);
+//		mapping all requests to the dispatcher servlet.
+		servlet.addMapping("/"); // the / and /* are considered as same.
+	}
+
+}
+</code>
+
+The WebAppConfig can be simlified by a tool which will learn later.
+
+<code>
+	//SpringWebMvcConfig
+	package com.example.swmd;
+	import org.springframework.context.annotation.Bean;
+	import org.springframework.context.annotation.ComponentScan;
+	import org.springframework.context.annotation.Configuration;
+	import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+	import org.springframework.web.servlet.view.InternalResourceViewResolver;
+	@Configuration
+	@ComponentScan("com.example.swmd")
+	@EnableWebMvc
+	//public class SpringWebMvcDemoConfig implements WebMvcConfigurationSupport {
+	// we dont need to perform the implementation as we have the @EnableMcv
+	public class SpringWebMvcDemoConfig  {
+		// SimleUrlHandlerMapping is used by default. we just need to configure the viewResolver
+		// We will use InternalReourceViewResover.
+		// As its not a bean that we are creating, we need to set it here
+		@Bean
+		public InternalResourceViewResolver viewResolver() {
+			InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+			//setting prefix and suffix
+			viewResolver.setPrefix("/views/");
+			viewResolver.setSuffix(".jsp");
+			// setting priority - if there are multiple resolvers
+			viewResolver.setOrder(1);
+			return viewResolver;
+		}
+	}
+</code>
+
+Step 3: Creating a controller
+With all the config complete, we can create a controller. We dont need to create servlets anymore for the controller like we had before. We can simply create a class and annotate it as a Controller.
+<code>
+package com.example.swmd.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+@Controller
+@RequestMapping(value="/home")
+public class DefaultController {
+	// maps to 
+	// localhost:9090/spring-web-mvc-demo1
+	// localhost:9090/spring-web-mvc-demo1/
+	// localhost:9090/spring-web-mvc-demo1/home
+	@GetMapping("/test")
+	public String getName() {
+		// return the view name 
+		// the view needs to be placed in the folder specified in the viewResolver
+		// in this case its views which needs to be created inside the webApps.
+		// name of the file will be home.jsp
+		return "home";
+	}
+	
+}
+
+
+</code>
+
+creating jsp file:
+
+<code>
+
+</code>
+
+
+
 
 

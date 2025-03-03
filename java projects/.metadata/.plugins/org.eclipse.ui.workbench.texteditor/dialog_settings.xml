@@ -2,7 +2,7 @@
 <section name="Workbench">
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<section name="java.lang.Class">
-		<item key="selection" value="insert"/>
+		<item key="selection" value=""/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
@@ -10,6 +10,12 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="Mapped"/>
+			<item value="Ma"/>
+			<item value="handler"/>
+			<item value="ServletConte"/>
+			<item value="Context"/>
+			<item value="web."/>
 			<item value="bean"/>
 			<item value="insert"/>
 			<item value="jpql"/>

@@ -50,10 +50,12 @@
 			<item value="com.example"/>
 		</list>
 		<list key="name">
+			<item value="spring-web-mvc-demo1"/>
 			<item value="SpringCoreDemoXml"/>
 			<item value="JpaHibernateDemo5"/>
 		</list>
 		<list key="artifactId">
+			<item value="spring-web-mvc-demo1"/>
 			<item value="spring-core-demo-xml"/>
 			<item value="jpa-hibernate-demo7"/>
 			<item value="jpa-hibernate-demo-6"/>

@@ -4,12 +4,9 @@
   <artifactId>spring-core-demo-xml</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>SpringCoreDemoXml</name>
-  
   <properties>
   	<spring-version>6.2.2</spring-version>
   </properties>
-  
-  
   <dependencies>
   		<!--For Dependency injection-->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
@@ -18,7 +15,6 @@
 		    <artifactId>spring-core</artifactId>
 		    <version>${spring-version}</version>
 		</dependency>
-		
 		<!--Provides spring containers-->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
 		<dependency>
@@ -26,14 +22,11 @@
 		    <artifactId>spring-context</artifactId>
 		    <version>${spring-version}</version>
 		</dependency>
-		
 		<!--Spring Expression language-->
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-expression</artifactId>
 		    <version>${spring-version}</version>
 		</dependency>
-		
   </dependencies>
- 
 </project>
