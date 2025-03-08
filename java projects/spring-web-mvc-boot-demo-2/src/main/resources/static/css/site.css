@@ -1,0 +1,36 @@
+body{
+	background-color: #acfccc;
+}
+header{
+	background-color: #aaaaaa;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	padding: 10px;
+}
+
+header h3{
+	text-align: right;
+}
+
+header h1{
+	text-align: center;
+}
+
+section{
+	background-color: #ffffff;
+	padding : 15px;
+	min-height: 250px;
+}
+
+nav{
+	background-coor: #cacaca;
+	padding: 10px;
+}
+
+nav a {
+	text-decoration: none;
+	display: inline-block;
+	margin: inline-block;
+	margin-right: 2px;
+	padding: 5px;
+}

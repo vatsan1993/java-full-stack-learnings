@@ -2385,3 +2385,629 @@ no need to use project name.
 
 The problem with the internal server is, if any changed are made, we need to stop the application and run it again.
 we can also use a developer dependency in the pom.xml to run the embedded server with live reload. We will look at this later.
+
+Lets create another spring project
+spring-web-mvc-boot-demo-2
+The project setup is same,
+We are going to use Spring Web, Spring Boot Dev tools.
+Will restarts server when any changes are made in the project
+
+lets see how a controller can return data and view together
+
+To do this we need to Use ModelAndView class from  web.servlet package.
+the method we will use will return ModelAndView object.
+
+
+Controller code:
+<code>
+package com.example.controller;
+
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class CommonController {
+	@GetMapping({"", "/", "/home"})
+	public String defaultAction() {
+		return "home";
+	}
+	@RequestMapping("/header") // allows get, post or any other method.
+	public ModelAndView headerAction() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("header");
+		mv.addObject("title", "My Spring boot MVC App");
+		mv.addObject("today", LocalDateTime.now());
+		return mv;
+	}
+}
+
+</code>
+Properties file:
+<code>
+spring.application.name=spring-web-mvc-boot-demo-2
+server.port = 7777
+spring.mvc.view.prefix=/views/
+spring.mvc.view.suffix=.jsp
+</code>
+jsp files:
+<code>
+home.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header"/>
+</body>
+</html>
+</code>
+
+<code>
+header.jsp
+<header>
+	<h1>${title }</h1>
+	<h3>${today }</h3>
+</header>
+</code>
+
+Note: 
+In preferences, go to jsp validations settings and set "Include fragment file not found" to ignore.
+css and js files go in static folder of resources.
+
+Handling Forms
+--------------
+To use a form, need to provide an action attribute with the url for which we want to send the request. we can also provide the request method.
+Then in the controller, we need to create a method that mapped to the specified url.
+The method will have a parameter for each input , select, text area we create inside the form.
+The parameter will have @RequestParam annotation added to it.
+
+if we did not provide the action attribute, then the current url that we are on will be taken automatically.
+
+Updating the home.jsp with a form
+<code>
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!--  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/site.css" />-->
+<link rel="stylesheet" href="/css/site.css">
+
+</head>
+<body>
+	<jsp:include page="/header"/>
+	<section>
+		<form action="greet">
+			<label>Enter Your Name:
+				<input type="text" name="unm" />
+			</label>
+			<button>OK</button>
+		</form>
+		<p>${msg }</p>
+	</section>
+</body>
+</html>
+	
+</code>
+
+updating the controller:
+<code>
+package com.example.controller;
+
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class CommonController {
+	@GetMapping({"", "/", "/home"})
+	public String defaultAction() {
+		return "home";
+	}
+	@RequestMapping("/header") // allows get, post or any other method.
+	public ModelAndView headerAction() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("header");
+		mv.addObject("title", "My Spring boot MVC App");
+		mv.addObject("today", LocalDateTime.now());
+		return mv;
+	}
+	@GetMapping("/greet")
+	public ModelAndView doGreet(@RequestParam("unm")String userName) {
+		return new ModelAndView("home", "msg", "Hello!" + userName);
+	}
+}
+</code>
+
+css file:
+<code>
+	body{
+	background-color: #acfccc;
+}
+header{
+	background-color: #aaaaaa;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	padding: 10px;
+}
+
+header h3{
+	text-align: right;
+}
+
+header h1{
+	text-align: center;
+}
+
+section{
+	background-color: #ffffff;
+	padding : 15px;
+	min-height: 250px;
+}
+</code>
+
+For one or two inputs this will work perfectly fine. But it is hard to manage when we have a lot of input. for example, when we have registration page.
+This is where model attribute can be Used.
+
+@ModelAttribute:
+----------------
+It maps a model directly with a form.
+We use this annotation on the parameter of the function for which the url is mapped.
+We create a new form that takes in the loan principal amount,  interestRate and time duration and calculates the total payable amount.
+We create a model called Loan.
+Then we create a LoanService and its implementation
+Then we create a LoanController which is autowired with the loan service.
+The controller receives a Loan object as parameter and it use the @ModelAttribute annotation.
+Each property in it should match with the form element name attribute.
+WE have the loan-form-page.jsp which displays the form and the loan-ouput-page.jsp which displays the results.
+
+Loan Controller:
+<code>
+package com.example.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.model.Loan;
+import com.example.service.LoanService;
+
+@Controller
+public class LoanController {
+	@Autowired
+	private LoanService loanService;
+	@GetMapping("/loan")
+	public String showLoanForm() {
+		return "loan-form-page";
+	}
+	@PostMapping("/loan")
+	public ModelAndView receiveLoanFromForm(@ModelAttribute Loan loan) {
+		loanService.computeSI(loan);
+		return new ModelAndView("loan-output-page", "loan", loan);
+	}
+}
+
+</code>
+Loan.java
+<code>
+package com.example.model;
+
+public class Loan {
+	private double principal;
+	private double interestRate;
+	private double time;
+	private double simpleInterest;
+	private double payableAmount;
+	public Loan() {
+		super();
+	}
+	public Loan(double principal, double interestRate, double time, double simpleInterest, double payableAmount) {
+		super();
+		this.principal = principal;
+		this.interestRate = interestRate;
+		this.time = time;
+		this.simpleInterest = simpleInterest;
+		this.payableAmount = payableAmount;
+	}
+	public double getPrincipal() {
+		return principal;
+	}
+	public void setPrincipal(double principal) {
+		this.principal = principal;
+	}
+	public double getInterestRate() {
+		return interestRate;
+	}
+	public void setInterestRate(double interestRate) {
+		this.interestRate = interestRate;
+	}
+	public double getTime() {
+		return time;
+	}
+	public void setTime(double time) {
+		this.time = time;
+	}
+	public double getSimpleInterest() {
+		return simpleInterest;
+	}
+	public void setSimpleInterest(double simpleInterest) {
+		this.simpleInterest = simpleInterest;
+	}
+	public double getPayableAmount() {
+		return payableAmount;
+	}
+	public void setPayableAmount(double payableAmount) {
+		this.payableAmount = payableAmount;
+	}
+	
+}
+
+</code>
+
+Loan Service and its implementation:
+<code>
+package com.example.service;
+
+import com.example.model.Loan;
+
+public interface LoanService {
+	void computeSI(Loan loan);
+}
+
+
+
+package com.example.service;
+
+import org.springframework.stereotype.Service;
+
+import com.example.model.Loan;
+
+@Service
+public class LoanServiceIml implements LoanService{
+	@Override
+	public void computeSI(Loan loan) {
+		// TODO Auto-generated method stub
+		loan.setSimpleInterest(loan.getPrincipal() * loan.getInterestRate() * loan.getTime()/100);
+		loan.setPayableAmount(loan.getPrincipal() + loan.getSimpleInterest());	
+	}
+}
+
+</code>
+
+loan-form
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!--  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/site.css" />-->
+<link rel="stylesheet" href="/css/site.css">
+
+</head>
+<body>
+	<jsp:include page="/header" />
+	<section>
+		<form  method="POST">
+			<div>
+				<label>Principal:
+					<input type="decimal" name="principal" />
+				</label>
+			</div>
+			<div>
+				<label>Rate of Interest:
+					<input type="decimal" name="interestRate" />
+				</label>
+			</div>
+			<div>
+				<label>time Period:
+					<input type="decimal" name="time" />
+				</label>
+			</div>
+			<button>OK</button>
+		</form>
+		<p>${msg }</p>
+	</section>
+</body>
+</html>
+
+</code>
+
+loan output
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header" />
+	<section>
+		<table>
+			<tr><td>Principal: </td><td>${loan.principal }</td></tr>
+			<tr><td>Rate of Interest: </td><td>${loan.interestRate }</td></tr>
+			<tr><td>Time Period(yrs): </td><td>${loan.time }</td></tr>
+			<tr><td>Simple Interest: </td><td>${loan.simpleInterest }</td></tr>
+			<tr><td>Payable Amount: </td><td>${loan.payableAmount }</td></tr>
+		</table>
+	</section>
+</body>
+</html>
+</code>
+
+css constomizations are made.
+
+ModelAtrribute can also be used on a method.
+The method can return values and it can be used in various pages of the controller.
+
+Lets use session.
+we will use the @Scope("session") 
+By default all the beans will have a singleton scope. but to change it, we use the session scope.
+FriendsController
+<code>
+package com.example.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@Scope("session")
+public class FriendsController {
+	private List<String> friends;
+	@GetMapping("/friends")
+	public ModelAndView showFriends() {
+		return new ModelAndView("friends-page", "frds", friends);		
+	}
+	@GetMapping("/addFriend")
+	public ModelAndView addFriends(@RequestParam("fnm") String friendName) {
+		if(friends == null) {
+			friends = new ArrayList<>();
+		}
+		friends.add(friendName);
+		System.out.println(friends);
+		return new ModelAndView("friends-page", "frds", friends);
+	}
+	@GetMapping("/removeFriend")
+	public ModelAndView removeFriends(@RequestParam("dnm") String friendName) {
+		if(friends!= null) {
+			friends.remove(friendName);
+		}
+		return new ModelAndView("friends-page", "frds", friends);
+	}
+}
+
+</code>
+
+friends-page.jsp
+<code>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header" />
+	<section>
+		<h3>Friends</h3>
+		<!-- Used for debuggin
+		<p>${frds }</p>
+		<p>${not empty frds }</p>
+		 -->
+		<c:choose>
+		    <c:when test="${not empty frds}">
+		        <ol>
+				<c:forEach items="${frds }" var="f">
+					<!-- <li>${f } <a href="removeFriend?fnm=${f }">X</a> </li> -->
+					<li>${f } 
+					<form action="removeFriend">
+						<input type="hidden" name="fnm" value="${f }"/>
+						<button>Remove</button>	
+					</form> 
+					</li>
+				</c:forEach>
+				</ol>
+		    </c:when>
+		    <c:otherwise>
+		        <p>❌ frds is EMPTY or NULL</p>
+		    </c:otherwise>
+		</c:choose>
+		<form action="addFriend">
+			<label>Friend Name</label>
+			<input name="fnm" type="text">
+			<button>ADD</button>
+		</form>
+	</section>
+</body>
+</html>
+</code>
+
+Note: The friends will persist even whout using the Scope. We will see the difference when we use multiple browsers to access the webpage and add friends. This will simulate multiple users accessing the webpage.
+The c:if did not work properly. so we are using c:choose instead which works.
+
+Spring Form Tags:
+-----------------
+Spring provides something called spring form tags which helps to create better forms tags to integrate forms simpler.
+
+we can directly send an object of the Model to the from from the controller
+the form can capture it using a modelAttribute property
+
+We have special tags availble for us when we use the form taglib.
+we can work easily with things like select
+these new tags will have a new attribute called path.
+we can use path attribute for each input element to directly set the value inside the model class object that we received from the controller.
+
+Item Model:
+<code>
+package com.example.model;
+
+public class Item {
+	private int icode;
+	private double price;
+	private String name;
+	private String category;
+	public int getIcode() {
+		return icode;
+	}
+	public void setIcode(int icode) {
+		this.icode = icode;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}	
+}
+</code>
+
+Controller:
+<code>
+package com.example.controller;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.model.Item;
+
+@Controller
+public class ItemController {
+	@GetMapping("/items")
+	public ModelAndView showItemForm() {
+//		we are sending an empty item to the item form.
+//		in the item-form-page we use modelAttribute="item"> to make use of this object 
+//		each spring form tag will gave a path attribute which matches with the variables 
+//		in the Item class.
+		return new ModelAndView("item-form-page", "item", new Item());
+	}
+	@PostMapping("/items")
+	public ModelAndView receiveItemForm(@ModelAttribute Item item) {
+		return new ModelAndView("item-output-page", "item",item);
+	}
+	
+//	This will help to send the categories to the item-form-page
+//	when ever we use ${categories} in the form, this method is called and the categories are sent.
+	@ModelAttribute("categories")
+	public List<String> getCategories(){
+		return Arrays.asList(new String[] {"Pulses", "Cerals", "Beverages", "Others"});
+	}
+	
+}
+</code>
+
+item form-page:
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header"/>
+	<form:form method="POST" modelAttribute="item">
+		<div>
+			<form:label path="icode">Item Code</form:label>
+			<form:input path="icode" type="number"/>
+		</div>
+		<div>
+			<form:label path="name">Item name</form:label>
+			<form:input path="name" type="text"/>
+		</div>
+		<div>
+			<form:label path="price">Item Price</form:label>
+			<form:input path="price" type="decimal"/>
+		</div>
+		<div>
+			<form:label path="category">Item Category</form:label>
+			<form:select path="category" items="${categories }"/>
+		</div>
+		<button>OK</button>
+	</form:form>
+</body>
+</html>
+</code>
+
+item-output-page
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header" />
+	<section>
+		<table>
+			<tr><td>Icode: </td><td>${item.icode }</td></tr>
+			<tr><td>name: </td><td>${item.name }</td></tr>
+			<tr><td>Price </td><td>${item.price }</td></tr>
+			<tr><td>Category: </td><td>${item.category }</td></tr>
+		</table>
+	</section>
+</body>
+</html>
+
+</code>
+
+
+Next 
+Thime Leaf with bootstap
+
+

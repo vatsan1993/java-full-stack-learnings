@@ -10,6 +10,10 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="autowire"/>
+			<item value="tomcat"/>
+			<item value="tomca"/>
+			<item value="jasper"/>
 			<item value=".properties"/>
 			<item value="Mapped"/>
 			<item value="Ma"/>
