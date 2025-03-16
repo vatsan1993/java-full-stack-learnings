@@ -10,20 +10,21 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="@valid"/>
+			<item value="save"/>
+			<item value="springform"/>
+			<item value="@Model"/>
+			<item value="@Valid"/>
+			<item value="jstl"/>
+			<item value="@Column"/>
+			<item value="repo"/>
+			<item value="spring-boot-starter-data-d"/>
+			<item value="spring-boot-"/>
+			<item value="spring-boot"/>
+			<item value="data"/>
+			<item value="validation"/>
+			<item value="validdation"/>
 			<item value="autowire"/>
-			<item value="tomcat"/>
-			<item value="tomca"/>
-			<item value="jasper"/>
-			<item value=".properties"/>
-			<item value="Mapped"/>
-			<item value="Ma"/>
-			<item value="handler"/>
-			<item value="ServletConte"/>
-			<item value="Context"/>
-			<item value="web."/>
-			<item value="bean"/>
-			<item value="insert"/>
-			<item value="jpql"/>
 		</list>
 		<list key="replacehistory">
 		</list>

@@ -738,8 +738,9 @@ Annotations
 
 @Id - field level annotation. helps to represent a primary key in the class.
 @GeneratedValue - field level annotation. helps to auto generate values.
-@Column -- field level annotation. Helps to control the name of the column. If it is nullable or unique and other constrains.
+@Column(name="feild name") -- field level annotation. Helps to control the name of the column. If it is nullable or unique and other constrains.
 if the Column annotation is not applied, then the field name becomes the column name.
+the camelcasing in the name becomes underscores
 @Transient - field level annotation. If we dont want to map a field with any of the columns in  the database, then we wil create it as transient. the field will become non-persistent 
 
 
@@ -2079,11 +2080,18 @@ note: Spring 6.2.2 did not work properly for us. we were not able to reach the u
 	    <version>3.0.1</version>
 	    <scope>provided</scope>
 	</dependency>
-	<dependency>
-		<groupId>javax.servlet</groupId>
-	    <artifactId>jstl</artifactId>
-	    <version>1.2</version>
-	</dependency>
+	<!-- JSTL for JSP -->
+		<dependency>
+		    <groupId>jakarta.servlet.jsp.jstl</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.web</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+
   </dependencies>
   
   
@@ -3007,7 +3015,456 @@ item-output-page
 </code>
 
 
-Next 
-Thime Leaf with bootstap
+Spring Data:
+-----------
+Automates Data Repository. 
+Standard CRUD Operations are automatically created for us
+String Data provides interface CRUDRepository  and implementation JpaRepository for ORM
+We can only use the ORM if the database we are using is an RDBMS if its s nosql database ORM is not useful.
+If the database we are going to work with is not a RDBMS then we can use some other repositories like Neo4jRepository for cassandra and MongoRepository for mongodb
+
+If we are using spring and not spring boot, we need a lot of configuration.
+Spring boot will take care of config automatically. We simply need to specify which sort of driver we will be using.
+
+We need to create entity annotate it , configure all columns.
+Then create an interface that extends JpaRepository.
+No need to create implementation class.
+This will finish the  DAO . we dont need to actually write the CRUD operations.
+
+The JpaRepo contains a lot of method  like 
+save
+deleteById
+findById
+findAll
+existsById
+ 
+To perform some more operations that are not available in the above methods which are provided above, JpaRepo provide some nomenclature that we can use to use custom quirying,
+existBy<FieldName> where propertyName is name of the proprty that we have in the entity.
+We put these in our Repository interface. As its an interface, none of these wil have implementations
+	for example we can create methods like existsByTitle(String titlle), existByMobile(String mobile)
+
+	
+FindBy<FieldName> returns Optional<Entiry> or Entity if exists and null if it doesnt.
+	For Example findByTitle(String mobile);, findByMobile(String mobile);
+
+findAlBy<FieldName>  - returns a list of Entity.
+	findAllByUnit(String unit);
+	findAlBySkill(String skill);
+	
+in more specific situations we can were the function is not available as mentioned above, we can write our own query by creating a custom function name and apply @Query annotation with the JPQL
+
+@Query("JPQL")
+List<Entity> anyfun();
+no need for any implementation
+
+we can create these in our repository.
+
+Bean Validation:
+----------------
+As part of jpa implementations, different vendors have introduced validation annotations which comes from jpa package.
+By default the spring data with the spring boot uses hybernate internally for the jpa implementation. so the validation annotations will be implemented by hibernate.
+
+The annotations available are
+@NotNull(messge= "The error message here.")
+@NotBlank - for strings
+@MinLength
+@MaxLength
+@Min
+@Max
+@Past - for date
+@Future - for date.
+@DateTimeFormat(iso=ISO.DATE) - for dates
+
+@Valid- This is applied on the Same object that contains the @Model attribute and We use a new class called as BindingResult which will get the errors.
+in the forms, we can use the 
+<form:error> tag that maps to the vaidation errors coming from the Controller.
+
+ISO is from import org.springframework.format.annotation.DateTimeFormat.ISO;
+and not from the following package.
+import javax.print.attribute.standard.MediaSize.ISO;
+
+
+ and many more annotations are available.
+ 
+ 
+ 	// note: these annotations should be from jakarta.validation.constraints.
+	// it should not be from org.antir.
+
+New Project: inventory-management-spring-application
+We will log into the mysql databse and drop the items table as there are some inconsistencies in the column names with our old projects.
+Add Spring Web, Spring Dev Tools, String Data Jpa, mysql driver
+Add jasper and jstl and the spring boot validations to the pom.xml
+<code>
+		<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
+		<!-- JSTL for JSP -->
+		<dependency>
+		    <groupId>jakarta.servlet.jsp.jstl</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.web</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
+		<dependency>
+		    <groupId>org.apache.tomcat.embed</groupId>
+		    <artifactId>tomcat-embed-jasper</artifactId>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+</code>
+In the properties folder, we will have properties of server and properties for the database.
+<code>
+	spring.application.name=inventory-management-spring-application
+	server.port=7777
+	spring.mvc.view.prefix=/pages/
+	spring.mvc.view.suffix=.jsp
+	# db config
+	spring.datasource.url=jdbc:mysql://localhost:3306/imsDb
+	#spring.datasoruce.driver-class-name=com.mysql.jdbc.Driver
+	spring.datasoruce.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.username=root
+	spring.datasource.password=ssvnka302#
+	spring.jpa.show-sql=true
+	spring.jpa.hibernate.ddl-auto=update
+	spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+</code>
+
+
+Then we will create the packages for controller, service, dao, entity, exception, service.
+
+Copy reusable content from the inventory-management-portal application.
+All the view, entities, exceptions
+The controllers and the DAO needs to be built from scratch
+
+Now we need to set the annotations in the entity classes 
+<code>
+	package com.example.entity;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
+
+
+@Entity
+// note: we will generally have a table already available in the database. 
+// we have use the same table name.  
+@Table(name="items")
+public class Item implements Serializable{
+
+	@Id
+	@Column(name="icode")
+	@NotNull(message="Item code cannot be omitted")
+	// note: the NotNull should be from jakarta.validation.constraints.
+	// it should not be from org.antir.
+	@Min(value =1, message="Item code cannot be zero or negative")
+    private Integer icode;
+	
+	@Column(name="title")
+	@NotBlank(message="title cannot be blank")
+	@NotNull(message="title cannot be omitted")
+	@Size(min= 5, max=20, message="title should be between 5 and 20 characters in length")
+    private String title;
+	
+	@Column(name="packageDate")
+	@NotNull(message="Package Date cannot be omitted")
+	@PastOrPresent(message="Package date cannot be a future date")
+    private LocalDate packageDate;
+	
+	@Column(name="fragile")
+    private Boolean fragile;
+	
+	@Column(name="unit")
+	@NotBlank(message="unit cannot be blank")
+	@NotNull(message="unit cannot be omitted")
+	@Size(min= 2, max=10, message="unit should be between 2 and 10 characters in length")
+    private String unit;
+	
+	@Column(name="costPrice" )
+	@NotNull(message="Cost price cannot be omitted")
+	@Min(value =1, message="Cost price cannot be zero or negative")
+    private Double costPrice;
+	
+	@Column(name="sellingPrice")
+	@NotNull(message="Selling price cannot be omitted")
+	@Min(value =1, message="seling price cannot be zero or negative")
+    private Double sellingPrice;
+
+    public Item(Integer icode, String title, LocalDate packageDate, Boolean fragile, String unit, Double costPrice, Double sellingPrice) {
+        this.icode = icode;
+        this.title = title;
+        this.packageDate = packageDate;
+        this.fragile = fragile;
+        this.unit = unit;
+        this.costPrice = costPrice;
+        this.sellingPrice = sellingPrice;
+    }
+    public Item() {
+    }
+
+    public Integer getIcode() {
+        return icode;
+    }
+
+    public void setIcode(Integer icode) {
+        this.icode = icode;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public LocalDate getPackageDate() {
+        return packageDate;
+    }
+    public void setPackageDate(LocalDate packageDate) {
+        this.packageDate = packageDate;
+    }
+    public Boolean getFragile() {
+        return fragile;
+    }
+    public void setFragile(Boolean fragile) {
+        this.fragile = fragile;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    public Double getCostPrice() {
+        return costPrice;
+    }
+    public void setCostPrice(Double costPrice) {
+        this.costPrice = costPrice;
+    }
+    public Double getSellingPrice() {
+        return sellingPrice;
+    }
+    public void setSellingPrice(Double sellingPrice) {
+        this.sellingPrice = sellingPrice;
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Item{");
+        sb.append("icode=").append(icode);
+        sb.append(", title=").append(title);
+        sb.append(", packageDate=").append(packageDate);
+        sb.append(", fragile=").append(fragile);
+        sb.append(", unit=").append(unit);
+        sb.append(", costPrice=").append(costPrice);
+        sb.append(", sellingPrice=").append(sellingPrice);
+        sb.append('}');
+        return sb.toString();
+    }
+}
+</code>
+
+now we create ItemRepoitory interface inside the dao package
+this interface extends JpaRepository
+Note: we need to have extends and not implements as ItemRepoitory is not a concrete class.
+The JpaRepository generic that needs two  datatypes. 
+The first one is the Entity class for which we are creating the Repository
+The second one should be the data type of the primary key in the entity.
+we need to also mark this interface with the @Repository annotation
+<code>
+	package com.example.dao;
+	import org.springframework.data.jpa.repository.JpaRepository;
+	import org.springframework.stereotype.Repository;
+	import com.example.entity.Item;
+	@Repository
+	public interface ItemRepository extends JpaRepository<Item, Integer> {
+	}
+</code>
+The Repository does not need any extra code.
+
+When working with the service, we need the same interface as before but we will add some annotations.
+So lets get the ItemService interface.
+
+We will remove the validations as the annotations that we have on the entity will take care of the validations.
+<code>
+	package com.example.service;
+	import java.util.List;
+	import com.example.entity.Item;
+	import com.example.exception.ImsException;
+	public interface  ItemService {
+	    Item add(Item item) throws ImsException;
+	    Item save(Item item) throws ImsException;
+	    boolean deleteItem(Integer icode) throws ImsException;
+	    Item getItemById(Integer icode) throws ImsException;
+	    List<Item> getAllItems() throws ImsException;
+	}
+	
+</code>
+
+Now lets build the Service implementation class. 
+we need to annotate this class with @Service
+We have to autowire the appropriate Repository by creating an instance variable
+
+we then need to implement each method.
+These methods get a new annotation called @Transactional which helps to handle transactions.
+We need this as we will be performing multiple operations in a method. so having @Transactional will help us maintain ACID rules 
+
+The database operations are handled using the JpaRepository object.
+
+The Jparepository object contains a lot of method like
+existsById() - check if a database has the entry in it based on the pk.
+save() - persists the provided object into the database.
+deleteById() - deletes the entry provided with the pk.
+findById(id).orElse(null) - find an item by id. if not exists returns null.
+
+There are other methods available too but these are the most important ones.
+<code>
+	package com.example.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.dao.ItemRepository;
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+
+import jakarta.transaction.Transactional;
+
+@Service
+public class ItemServiceImpl implements ItemService {
+	@Autowired
+	private ItemRepository itemRepo;
+	@Override
+	@Transactional // to manage transactions, we need to use this.
+	public Item add(Item item) throws ImsException {
+		if(item != null) {
+			if(itemRepo.existsById(item.getIcode())) {
+				throw new ImsException("Item code already used!");
+			}
+			itemRepo.save(item);
+			return item;
+		}
+		return null;
+	}
+	@Transactional
+	@Override
+	public Item save(Item item) throws ImsException {
+		if(item != null) {
+			if(!itemRepo.existsById(item.getIcode())) {
+				throw new ImsException("Item code already used!");
+			}
+			itemRepo.save(item);
+			return item;
+		}
+		return null;
+	}
+	@Transactional
+	@Override
+	public boolean deleteItem(Integer icode) throws ImsException {
+		// TODO Auto-generated method stub
+		if(!itemRepo.existsById(icode)) {
+			throw new ImsException("Item code already used!");
+		}
+		itemRepo.deleteById(icode);
+		return true;
+	}
+	@Transactional
+	@Override
+	public Item getItemById(Integer icode) throws ImsException {
+		return itemRepo.findById(icode).orElse(null);
+	}
+	@Transactional
+	@Override
+	public List<Item> getAllItems() throws ImsException {
+		return itemRepo.findAll();
+	}
+}
+	
+</code>
+
+
+
+Its time to build the controllers.
+Lets build the DefaultController
+<code>
+	package com.example.controller;
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.GetMapping;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	@Controller
+	public class DefaultController {
+		@GetMapping({"", "/", "/home"})
+		public String getHome() {
+			return "index";
+		}
+		@RequestMapping("/header")
+		public String showHeader(){
+			return "header";
+		}
+	}
+</code>
+
+
+Lets Build a ItemController
+<code>
+
+</code>
+
+All the  jsp files has to be updated to use the mapping url instead of using the jsp file name as the spring uses the view resolver and the controller simply returns the name and the model for the page.
+
+
+
+Now that we have everything working, lets add a item that has the same icode as an existing icode. Then we get and exception.
+
+Exception Handling:
+-------------------
+@ExceptionHandler - we generally create this annotation in the Controller where the exception generates. but it will only work in that controller.
+If we need the same kind of exception handler, then we use another class with annotation
+@ControllerAdvice - This will be handle exceptions globally.
+
+
+
+HW: Create a search Page 
+Note: update the code sections above
+
+
+Thime Leaf with bootstrap:
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
