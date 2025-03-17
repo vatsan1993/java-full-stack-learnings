@@ -10,11 +10,14 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="@Valid"/>
+			<item value="@ModelAttr"/>
+			<item value="ModelAttr"/>
+			<item value="Model"/>
 			<item value="@valid"/>
 			<item value="save"/>
 			<item value="springform"/>
 			<item value="@Model"/>
-			<item value="@Valid"/>
 			<item value="jstl"/>
 			<item value="@Column"/>
 			<item value="repo"/>
@@ -22,9 +25,6 @@
 			<item value="spring-boot-"/>
 			<item value="spring-boot"/>
 			<item value="data"/>
-			<item value="validation"/>
-			<item value="validdation"/>
-			<item value="autowire"/>
 		</list>
 		<list key="replacehistory">
 		</list>

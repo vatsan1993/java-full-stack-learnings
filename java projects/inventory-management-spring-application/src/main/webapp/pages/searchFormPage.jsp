@@ -24,8 +24,5 @@
 	    <input type="text" name="searchValue" />
 	    <input type="submit" value="Submit" />
 	</form>
-	
-	
-	
 </body>
 </html>

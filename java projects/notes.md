@@ -3107,7 +3107,6 @@ Add jasper and jstl and the spring boot validations to the pom.xml
 		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
 		    <version>2.0.0</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
 		<dependency>
 		    <groupId>org.apache.tomcat.embed</groupId>
@@ -3151,6 +3150,9 @@ Now we need to set the annotations in the entity classes
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -3183,6 +3185,7 @@ public class Item implements Serializable{
     private String title;
 	
 	@Column(name="packageDate")
+	@DateTimeFormat(iso=ISO.DATE)
 	@NotNull(message="Package Date cannot be omitted")
 	@PastOrPresent(message="Package date cannot be a future date")
     private LocalDate packageDate;
@@ -3215,6 +3218,8 @@ public class Item implements Serializable{
         this.costPrice = costPrice;
         this.sellingPrice = sellingPrice;
     }
+
+
     public Item() {
     }
 
@@ -3229,18 +3234,23 @@ public class Item implements Serializable{
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public LocalDate getPackageDate() {
         return packageDate;
     }
+
     public void setPackageDate(LocalDate packageDate) {
         this.packageDate = packageDate;
     }
+
     public Boolean getFragile() {
         return fragile;
     }
+
     public void setFragile(Boolean fragile) {
         this.fragile = fragile;
     }
@@ -3248,18 +3258,23 @@ public class Item implements Serializable{
     public String getUnit() {
         return unit;
     }
+
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
     public Double getCostPrice() {
         return costPrice;
     }
+
     public void setCostPrice(Double costPrice) {
         this.costPrice = costPrice;
     }
+
     public Double getSellingPrice() {
         return sellingPrice;
     }
+
     public void setSellingPrice(Double sellingPrice) {
         this.sellingPrice = sellingPrice;
     }
@@ -3278,6 +3293,7 @@ public class Item implements Serializable{
         return sb.toString();
     }
 }
+
 </code>
 
 now we create ItemRepoitory interface inside the dao package
@@ -3287,16 +3303,31 @@ The JpaRepository generic that needs two  datatypes.
 The first one is the Entity class for which we are creating the Repository
 The second one should be the data type of the primary key in the entity.
 we need to also mark this interface with the @Repository annotation
+We dont need any extra code but to create very specific or custom queries, we need to write extra abstract methods.
 <code>
 	package com.example.dao;
-	import org.springframework.data.jpa.repository.JpaRepository;
-	import org.springframework.stereotype.Repository;
-	import com.example.entity.Item;
-	@Repository
-	public interface ItemRepository extends JpaRepository<Item, Integer> {
-	}
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import com.example.entity.Item;
+
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Integer> {
+	// these are queries that we can perform apart from the simple methods that are provided
+	Item findByTitle(String title);
+	List<Item> findAllByUnit(String unit);
+	//This is how we write a custom query
+	@Query("SELECT i FROM Item i WHERE i.sellingPrice BETWEEN :lower AND :upper")
+	List<Item> findAllInSellingPriceRange(double lower, double upper);
+	
+}
+
 </code>
-The Repository does not need any extra code.
+
 
 When working with the service, we need the same interface as before but we will add some annotations.
 So lets get the ItemService interface.
@@ -3304,17 +3335,24 @@ So lets get the ItemService interface.
 We will remove the validations as the annotations that we have on the entity will take care of the validations.
 <code>
 	package com.example.service;
-	import java.util.List;
-	import com.example.entity.Item;
-	import com.example.exception.ImsException;
-	public interface  ItemService {
-	    Item add(Item item) throws ImsException;
-	    Item save(Item item) throws ImsException;
-	    boolean deleteItem(Integer icode) throws ImsException;
-	    Item getItemById(Integer icode) throws ImsException;
-	    List<Item> getAllItems() throws ImsException;
-	}
-	
+
+import java.util.List;
+
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+
+public interface  ItemService {
+    Item add(Item item) throws ImsException;
+    Item save(Item item) throws ImsException;
+    boolean deleteItem(Integer icode) throws ImsException;
+    Item getItemById(Integer icode) throws ImsException;
+    List<Item> getAllItems() throws ImsException;
+    public Item searchByTitle(String title) throws ImsException;
+    public List<Item> searchByUnit(String unit) throws ImsException ;
+    public List<Item> searchByPriceRange(double minPrice, double maxPrice) throws ImsException ;
+
+}
+
 </code>
 
 Now lets build the Service implementation class. 
@@ -3333,7 +3371,35 @@ save() - persists the provided object into the database.
 deleteById() - deletes the entry provided with the pk.
 findById(id).orElse(null) - find an item by id. if not exists returns null.
 
+for extra operations, we can use the nomenclature provided by the Jpa repo.
+we can also use the @Query for custom query with JPQL.
 There are other methods available too but these are the most important ones.
+The ItemService interface:
+<code>
+	package com.example.service;
+
+import java.util.List;
+
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+
+public interface  ItemService {
+    Item add(Item item) throws ImsException;
+    Item save(Item item) throws ImsException;
+    boolean deleteItem(Integer icode) throws ImsException;
+    Item getItemById(Integer icode) throws ImsException;
+    List<Item> getAllItems() throws ImsException;
+    public Item searchByTitle(String title) throws ImsException;
+    public List<Item> searchByUnit(String unit) throws ImsException ;
+    public List<Item> searchByPriceRange(double minPrice, double maxPrice) throws ImsException ;
+
+}
+	
+</code>
+
+
+The ItemServiceImpl class:
+
 <code>
 	package com.example.service;
 
@@ -3396,7 +3462,17 @@ public class ItemServiceImpl implements ItemService {
 	public List<Item> getAllItems() throws ImsException {
 		return itemRepo.findAll();
 	}
+	 public Item searchByTitle(String title) throws ImsException{
+	     return itemRepo.findByTitle(title);
+	 }
+    public List<Item> searchByUnit(String unit) throws ImsException {
+        return itemRepo.findAllByUnit(unit);
+    }
+    public List<Item> searchByPriceRange(double minPrice, double maxPrice) throws ImsException {
+        return itemRepo.findAllInSellingPriceRange(minPrice, maxPrice);
+    }	
 }
+
 	
 </code>
 
@@ -3424,15 +3500,365 @@ Lets build the DefaultController
 
 
 Lets Build a ItemController
+The ItemController is using the @ModelAttribute annotation to connect the form to the entity.
+@Valid annotation is used to validate the data.
+We combine it with the BindingResult
+Then we use the <form:error> to display the validation errors.
+We use the ModelAndView to return the name of the page along with the data.
 <code>
+	package com.example.controller;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+import com.example.service.ItemService;
+
+import jakarta.validation.Valid;
+
+@Controller
+public class itemController {
+	
+	@Autowired
+	private ItemService itemService;
+	
+	
+	@GetMapping("/list")
+	public ModelAndView shopItemsList() throws ImsException {
+		// we will handle the exceptsions later
+		return new ModelAndView("itemsListPage", "items", itemService.getAllItems());
+	}
+	
+	@GetMapping("/newItem")
+	public ModelAndView getItemForm() {
+		
+		ModelAndView mv =  new ModelAndView("ItemFormPage", "item", new Item());
+		mv.addObject("isNew", true);
+		// this makes sure we dont get any error after we click sumbit for the second time 
+		return mv;
+	}
+	
+	@PostMapping("/addItem")
+	public ModelAndView addNewItem(@ModelAttribute("item") @Valid Item item, BindingResult result) throws ImsException {
+//		@Valid  will validate the item and if any errors are there, the errors are stored in result
+		if(result.hasErrors()) {
+			ModelAndView mv = new ModelAndView("ItemFormPage", "item", item);
+			mv.addObject("isNew", true);
+			return mv;
+		}
+		itemService.add(item);
+		return new ModelAndView("itemsListPage", "items", itemService.getAllItems());
+	}
+
+	@GetMapping("/editItem")
+	public ModelAndView getEditItemForm(@RequestParam("icode") String icode) throws NumberFormatException, ImsException {
+		Item item = itemService.getItemById(Integer.parseInt(icode));
+		return new ModelAndView("ItemFormPage", "item", item);
+	}
+	
+	@PostMapping("/saveItem")
+	public ModelAndView saveItem(@ModelAttribute("item") @Valid Item item, BindingResult result) throws ImsException {
+//		@Valid  will validate the item and if any errors are there, the errors are stored in result
+		if(result.hasErrors()) {
+			ModelAndView mv = new ModelAndView("ItemFormPage", "item", item);
+		
+			return mv;
+		}
+		itemService.save(item);
+		return new ModelAndView("itemsListPage", "items", itemService.getAllItems());
+	}
+
+	
+	@GetMapping("/deleteItem")
+	public ModelAndView deleteItem(@RequestParam("icode") int icode) throws  ImsException {
+		itemService.deleteItem(icode);
+		return new ModelAndView("itemsListPage", "items", itemService.getAllItems());
+	}
+	
+//	get the options for the select element.
+	@ModelAttribute("units")
+	public List<String> getUnits(){
+		return Arrays.asList(new String[] {"Kg", "Mtr", "Ltr", "Packet","Piece"});
+		
+	}
+	
+	 @GetMapping("/search")
+	    public ModelAndView showSearchForm() {
+	        ModelAndView mv = new ModelAndView("searchFormPage");
+	        mv.addObject("searchTypes", Arrays.asList("Title", "Unit", "Price Range"));
+	        return mv;
+	    }
+
+	    @PostMapping("/searchResults")
+	    public ModelAndView searchItems(@RequestParam("searchType") String searchType,
+	                                    @RequestParam("searchValue") String searchValue) throws ImsException {
+	        
+	    	System.out.println("Searching.........");
+	    	List<Item> results = null;
+	        switch (searchType) {
+	            case "Title":
+	                results = Arrays.asList(itemService.searchByTitle(searchValue));
+	                break;
+	            case "Unit":
+	                results = itemService.searchByUnit(searchValue);
+	                break;
+	            case "Price Range":
+	                // Assuming input is like "min-max" (e.g., "100-500")
+	                String[] range = searchValue.split("-");
+	                if (range.length == 2) {
+	                    double min = Double.parseDouble(range[0]);
+	                    double max = Double.parseDouble(range[1]);
+	                    results = itemService.searchByPriceRange(min, max);
+	                } else {
+	                    results = List.of(); // Empty result if input is invalid
+	                }
+	                break;
+	            default:
+	                results = List.of();
+	        }
+	        return new ModelAndView("itemsListPage", "items", results);
+	    }
+}
+	
+</code>
+
+
+Default Controller:
+<code>
+package com.example.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class DefaultController {
+	@GetMapping({"", "/", "/home"})
+	public String getHome() {
+		return "index";
+	}
+	@RequestMapping("/header")
+	public String showHeader(){
+		return "header";
+	}
+
+}
 
 </code>
 
 All the  jsp files has to be updated to use the mapping url instead of using the jsp file name as the spring uses the view resolver and the controller simply returns the name and the model for the page.
 
+We also updated the forms to be using the spring form tags 
+to do this we need to use the form tag lib with uri and prefix
+then we use the spring form tags to work with the forms.
 
+index.jsp
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IMS - Home</title>
+</head>
+<body>
+	<jsp:include page="/header"></jsp:include>
+</body>
+</html>
+
+</code>
+
+header.jsp
+<code>
+<header>
+	<h1>Inventory Management Portal</h1>
+	<hr>
+	<nav>
+		<a href="/home">Home</a>
+		<span>|</span>
+		<a href="/list">Items List</a>
+		<span>|</span>
+		<a href="/newItem">Add New</a>
+		<span>|</span>
+		<a href="search">Search</a>
+	</nav>
+</header>
+</code>
+
+ItemFormPage.jsp
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header"></jsp:include>
+	<h3>${isNew? "New Item": "EditItem"} </h3>
+	<!-- Lets say we type the icode for the first time and the we get an error for one of
+	the other properties. When we submit it for the second time we will get an error  if
+	we the following commented form. This is because the form changes from addItem to
+	 saveItem as the icode already exists. to avoid this, we create a new object in the  
+	 in the controller called isNew.
+	 -->
+	<!--<form:form method="POST" modelAttribute="item" action="${item.icode == null ? '/addItem' : '/saveItem'}"></form:form>-->
+	<form:form method="POST" modelAttribute="item" action="${isNew ? '/addItem' : '/saveItem'}">
+		<div>
+			<form:label path="icode">Item code:</form:label>
+			<form:input path="icode" type="number"  readonly="${!isNew}"/>
+			<form:errors path="icode" />
+		</div>
+		<div>
+			<form:label path="title">Title:</form:label>
+			<form:input path="title" type="text" />
+			<form:errors path="title" />
+		</div>
+		<div>
+			<form:label path="unit">Unit:</form:label>
+			<form:select path="unit" items= "${units}" />
+			<form:errors path="unit" />
+		</div>
+		<div>
+			<form:label path="fragile">Fragile:</form:label>
+			<form:checkbox path="fragile" />
+			<form:errors path="fragile" />
+		</div>
+		<div>
+			<form:label path="packageDate">Package Date:</form:label>
+			<form:input path="packageDate" type="date"/>
+			<form:errors path="packageDate" />
+		</div>
+		<div>
+			<form:label path="costPrice">Cost Price:</form:label>
+			<form:input path="costPrice" type="number" min="0.01" step="0.01" />
+			<form:errors path="costPrice" />
+		</div>
+		<div>
+			<form:label path="sellingPrice">Selling Price:</form:label>
+			<form:input path="sellingPrice" type="number" min="0.01" step="0.01"  />
+			<form:errors path="sellingPrice" />
+		</div>
+		<div>
+			<button>Save</button>
+		</div>
+	</form:form>
+</body>
+</html>
+</code>
+
+ItemListPage.jsp
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="/header"></jsp:include>
+
+<c:choose>
+	<c:when test="${items == null} ">
+		<p>No Items found</p>
+	</c:when>
+	<c:when test="${items.isEmpty()} ">
+		<p>All items deleted</p>
+	</c:when>
+	<c:otherwise>
+		<h3>Items</h3>
+		<table border="1" cellspacing="5px" cellpadding="5px">
+			<tr>
+				<th>Icode</th>
+				<th>Title</th>
+				<th>Is Fragile</th>
+				<th>Package Date</th>
+				<th>Unit</th>
+				<th>Cost Price</th>
+				<th>Selling Price</th>
+				<th> </th>
+				<th> </th>
+			</tr>
+		<c:forEach var="item" items="${ items }">
+			<tr>
+				<td>${item.getIcode() }</td>
+				<td>${item.getTitle() }</td>
+				<td>${item.getFragile() }</td>
+				<td>${item.getPackageDate() }</td>
+				<td>${item.getUnit()} </td>
+				<td>${item.getCostPrice() }</td>
+				<td>${item.getSellingPrice() }</td>
+				<td>
+					<form action="/editItem">
+						<input type="hidden" name="icode" value= "${item.getIcode() }" }>
+						<button>Edit</button>
+					</form>
+				</td>
+				<td>
+					<form action="/deleteItem">
+						<input type="hidden" name="icode" value= "${item.getIcode() }">
+						<button>Delete</button>
+					</form>
+				</td>
+			</tr>
+		</c:forEach>
+		</table>
+	</c:otherwise>
+</c:choose>
+
+</body>
+</html>
+</code>
+
+The SearchFormPage.jsp
+<code>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="/header"></jsp:include>
+	<h2>Search Items</h2>
+	<form action="/searchResults" method="post">
+		<label for="searchType">Search By:</label>
+		<select name="searchType" value="Title">
+	     <c:forEach var="type" items="${searchTypes}">
+	     	<option name="${type}" value="${type }" >${type }</option>
+	     </c:forEach>
+	    </select>
+	    <p>${searchType }</p>
+	    <label for="searchValue">Search Value:</label>
+	    <input type="text" name="searchValue" />
+	    <input type="submit" value="Submit" />
+	</form>
+</body>
+</html>
+</code>
 
 Now that we have everything working, lets add a item that has the same icode as an existing icode. Then we get and exception.
+The @Valid will only handles validations. but any other sql errors or other kinds of errors needs to be handled by us.
 
 Exception Handling:
 -------------------
@@ -3440,17 +3866,160 @@ Exception Handling:
 If we need the same kind of exception handler, then we use another class with annotation
 @ControllerAdvice - This will be handle exceptions globally.
 
+Creating a GlobalExceptionController
+<code>
+package com.example.controller;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.exception.ImsException;
+
+@ControllerAdvice
+public class GlobalExceptionController {
+	@ExceptionHandler(ImsException.class)
+	public ModelAndView handleImsException(ImsException exception) {
+		return new ModelAndView("errPage", "errMsg", exception.getMessage());
+	}
+
+}
+</code>
 
 
-HW: Create a search Page 
-Note: update the code sections above
+using bootstrap:
+----------------
+Lets create a copy of the inventory-management spring application and apply bootstrap.
+Project name: bootstrap-inventory-managemen-spring-application
+
+Lets get the bootstrap cdn links and add it to the jsp pages.
+we added a lot of bootstrap including nav bar, button and table, form styles styles.
+
+Restful web services With Spring Rest:
+-------------------------------------
+It is a sub module of spring web.
+Used to develop resful web services.
+Web service: A software design that creates an interoperable(works with different languages for the client) interaction between a stand alone UI and server.
+
+In the old days websites were enough for companies. But now, we need web applications, mobile application, an application on android auto and so on.
+So we cannot integrate the UI directly into the server application like what we did till now, Our server will provide data to which ever client app requests it. 
+
+This is where we will build the web services come into the picture,
+SOAP Web Services (Simple Object Access Protocol)
+	- uses xml for communication.
+	- Had problems like xml validations needed complex ddts
+	- Converting object to xml and xml to object
+	- cannot use xml to transmit images, binary files like pdf, and so on
+	
+
+REST (Representational State Transfer).
+	Uses HTTP Protocol-  Supports different file types
+	Can use JSON, XML, Binary Resposes.
+	
+The Spring Rest provides with annotations that we can make use of create the application,
+
+@RestController - Its a combination of @Controller and @ResposeBody.
+@ResponseBody is used to represent that this controller does not return any view names. It simply returns data.
+
+@RestControllerAdvice - handles exceptions and returns data to the client.
+
+The return type of the methods will be class called ResponseEntity<> 
+It contains 2 parameters that we need to pass.
+1. payload/body - the data that we want to respond with.
+2. status - the http status codes. For this we have a class called HttpStatus which has contans like BAD_REQUEST, INTERNAL_SERVER_ERROR , OK, ....
+
+It is a generic class so it will hold the datatype depending on what we want to return.
+for example if we are returning an Item object, we use ResposeEntity<Item>
+
+http2 codes
+1xx - request is received and under process.
+2xx - request was procesed successfully
+3xx - redirectd
+4xx - client side error
+5xx - server side error.
+
+Until now we create different links for different kinds of requests and they did not follow any particular structure. This is because we developed the UI aswell.
+
+This will now work from now. as UI will be developed by a differnt team and there has to be a standardized way to create urls.
+This is part of Restfulness aswel and we have to follow this structure.
+
+So we will have a following structure
+			/item
+Retrieve	GET
+Insert		POST
+Update		PUT
+Delete		DELETE
+
+so each type of a request will be mapped to a specific request method.
+The url pattern will also change if we are working with individual components
+for example  GET /item/2 will be used to retrieve the item with id 2.
+query parameter is not recommended as we have to communicate which query parameter exists to the ui developers.
+Instead we use the url parameter which is the 2 in the url
+The url mapping in the code will be written like @GetMapping("/{icode}")
+and we use the @PathVariabe on the method's parameter.
+
+If we are going to additional body for the method, such as for the newItem. then we have to use the @RequestBody Attributes which maps to an Entity or a model class.
+
+
+So each controller will be mapping to one Entity. which helps to maintain the code aswell
+So we will directly write the @RequestMappring on the Controller class and not on the internal method. if there is a sub path available, then we can use the extra mapping on the methods.
+
+Project Name: inventory-management-spring-application-rest
+Lets clone the bootstrap project 
+We will not need the UI stuff. so lets remove the UI related rependencies from the pom.xml
+We will remove, jstl, jasper. 
+
+lets also remove prefix and suffix properties
+
+We will also remove any jsp pages.
+
+We need to re write our controllers as the old controller are reurning the page names.
+So lets delete the DefaultController and the ItemController.
+Lets update the Annotation of the GlobalExceptionController to use @RestControllerAdvice
+lets also add another method that handles exceptions that are not related to client side errors.
+<code>
+	package com.example.controller;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.exception.ImsException;
+
+@RestControllerAdvice
+public class GlobalExceptionController {
+	@ExceptionHandler(ImsException.class)
+	public ResponseEntity<String> handleImsException(ImsException exception) {
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleException(ImsException exception) {
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+}
+</code>
+
+
+Lets now Create a ItemRestController class.
+
+
+
+
+Spring test:
+---------------
+
+
+Spring Security:
+----------------
+
 
 
 Thime Leaf with bootstrap:
 --------------------
-
-
-
 
 
 
