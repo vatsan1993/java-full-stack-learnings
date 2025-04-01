@@ -4015,7 +4015,36 @@ Spring test:
 
 Spring Security:
 ----------------
+Spring allows us to restrict access to different api end points depending on the granted Authorities.
+For setting this up, we will have roles table with many to many relationship with the users tables.
+The we need too classes that implements from UserDetails and UserDetailsService interfaces that are provided by the spring security.
+These two classes along with the user role helps to setup access to each end point. To use pring security, at the project start, we can simply add its dependencies.
 
+JWT
+To Setup Spring Security with jwt we need setup the dependencies for them in the pom file.
+<code>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt-impl.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt-jackson.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+</code>
+
+Then we need to configure the application to use the jwt 
+
+After this we create a Util class that has methods to generate jwt tokens, validate the tokens, get username from the token and so on,
 
 
 Thime Leaf with bootstrap:
