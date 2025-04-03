@@ -10,6 +10,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="delete"/>
 			<item value="@Valid"/>
 			<item value="@ModelAttr"/>
 			<item value="ModelAttr"/>
@@ -24,7 +25,6 @@
 			<item value="spring-boot-starter-data-d"/>
 			<item value="spring-boot-"/>
 			<item value="spring-boot"/>
-			<item value="data"/>
 		</list>
 		<list key="replacehistory">
 		</list>
