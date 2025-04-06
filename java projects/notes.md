@@ -62,6 +62,9 @@ The service class can have more methods for validations and other things.
 # UI
 The UI is where we create the user interface for simple applications it might contain cli but later we will see how we can interface these with web applications.
 
+
+car-enquiry project
+
 # Project Structure:
 src
 	-main
@@ -4007,10 +4010,153 @@ public class GlobalExceptionController {
 Lets now Create a ItemRestController class.
 
 
-
-
 Spring test:
 ---------------
+We will test the dao, service.
+
+h2 is an in memory database that we will use so that we cannot accidentally modify the main database.
+
+we will include the dependency of h2 in our project and create a new properties file in the test folder.
+
+
+Project Setup:
+Copying inventory management spring application.
+
+dependency
+<code>
+		<!-- h2 database dependency-->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+</code>
+
+Let create a new properties in the resources source folder of the test folder.
+
+application-test.properties
+<code>
+server.port=8887
+
+# DB Config
+spring.datasource.url=jdbc:h2:mem:test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=
+spring.datasource.password=
+
+# Hibernate Config
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+	
+</code>
+
+
+Annotations :
+@DataJpaTest
+used for setting hibernate , pring data and DataSorce , performing @EntityScan, turn on sql logging.
+We also want to set which test profile we need to make use of. This can be done by using @ActiveProfiles on the test class.
+
+We will set this on the Test class.
+we create a new package called com.example.test in the src/test/java
+
+Now we create the ItemRepoTest which will get the @DataJpaTest.
+
+Normally to test, we perform an operation, then go to the database and check if that is what we have in the database.
+But for automated testing, we need to have a trusted channel and an expected channel. We then compare them.
+
+To do this we will have to work with TestEntityManager.
+
+The TestEntityManager has direct access to our database and it has methods like
+persist
+clear
+flush
+
+The test class
+<code>
+package com.example.test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import java.util.Arrays;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import com.example.dao.ItemRepository;
+import com.example.entity.Item;
+
+@ActiveProfiles("test")
+@DataJpaTest
+public class ItemRepoTest {
+	
+	@Autowired
+	private ItemRepository itemRepository;
+	
+	@Autowired
+	private TestEntityManager entityManager;
+	
+	private List<Item> testData;
+	
+	@BeforeEach
+	public void setUp() {
+		testData = Arrays.asList(
+				new Item[] {
+						new Item(101, "Rice Bag", LocalDate.now(), true, "BAG", 1024.0, 2024.0),
+						new Item(102, "Sugar Bag", LocalDate.now(), true, "BAG", 3024.0, 4024.0),
+						new Item(103, "Channa Bag", LocalDate.now(), true, "PACKET", 1024.0, 2024.0),
+						new Item(104, "Wheat Bag", LocalDate.now(), true, "BAG", 5024.0, 7024.0),
+						new Item(105, "Urdh Bag", LocalDate.now(), true, "PACKET", 204.0, 524.0)
+				}
+		);
+		for(Item item: testData) {
+			entityManager.persist(item);
+		}
+	}
+	
+	
+	@AfterEach
+	public void tearDown() {
+		entityManager.clear();
+		entityManager.flush();
+		testData = null;
+	}
+	@Test
+	public void whenFoundByTitle_GivenExistingTitle_test() {
+		Item expected = testData.get(0);
+		Item actual = itemRepository.findByTitle(expected.getTitle());
+		
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void whenFoundByTitle_GivenNonExistingTitle_test() {
+		
+		Item actual = itemRepository.findByTitle("asdjfkjsnfksjn");
+		
+		assertNull( actual);
+	}
+	
+}
+
+</code>
+
+
+
+
+We will create .data file that will contain some data which will be inserted into the database so that we can perform queries and tests on this data.
+
+
+
+
+
 
 
 Spring Security:
