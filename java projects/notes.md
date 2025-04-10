@@ -4052,9 +4052,9 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 </code>
 
 
-Annotations :
+Repository Test:
 @DataJpaTest
-used for setting hibernate , pring data and DataSorce , performing @EntityScan, turn on sql logging.
+used for setting hibernate , spring data and DataSorce , performing @EntityScan, turn on sql logging.
 We also want to set which test profile we need to make use of. This can be done by using @ActiveProfiles on the test class.
 
 We will set this on the Test class.
@@ -4097,15 +4097,11 @@ import com.example.entity.Item;
 @ActiveProfiles("test")
 @DataJpaTest
 public class ItemRepoTest {
-	
 	@Autowired
 	private ItemRepository itemRepository;
-	
 	@Autowired
 	private TestEntityManager entityManager;
-	
 	private List<Item> testData;
-	
 	@BeforeEach
 	public void setUp() {
 		testData = Arrays.asList(
@@ -4121,8 +4117,6 @@ public class ItemRepoTest {
 			entityManager.persist(item);
 		}
 	}
-	
-	
 	@AfterEach
 	public void tearDown() {
 		entityManager.clear();
@@ -4133,30 +4127,236 @@ public class ItemRepoTest {
 	public void whenFoundByTitle_GivenExistingTitle_test() {
 		Item expected = testData.get(0);
 		Item actual = itemRepository.findByTitle(expected.getTitle());
-		
 		assertEquals(expected, actual);
 	}
 	@Test
 	public void whenFoundByTitle_GivenNonExistingTitle_test() {
-		
 		Item actual = itemRepository.findByTitle("asdjfkjsnfksjn");
-		
 		assertNull( actual);
+	}
+}
+
+</code>
+
+
+We will create .data file that will contain some data which will be inserted into the database so that we can perform queries and tests on this data.
+
+ServiceUnitTest:
+Now lets create a unit test for the Service layer.
+The Service layer is dependent on the Repo. If the repo fails, then the test will also fail.
+This is where we use Mocking.
+We will mock the dao and only test the service. This allows us to assume everything is working in the DAO Layer and we will be only concerned about the Service layer.
+
+
+1. We will create a ItemServiceUnitTest.java
+As we are not testing the Repo here, we will use the following annotation
+@SpringJUnitConfig - Acts as a bridge between spring and  junit5.
+@TestConfiguration
+@MockBean - We use this on the repo object making them mock 
+
+2. In the class we create an object for the Repo and Autowire the service we want to test. 
+But the problem here is as the @Autowired will use the original repo and not the mock repo that we created in the test class. to fix this, we use the @TestConfiguation 
+This should be a static inner class . The class will contain a Bean configuration method that returns the service implementation object.
+
+Now our class is ready for the testing.
+Note: we dont use  the entity manager here.
+
+3. in each test, we need to identify what repo methods the service is using to do the operation and those methods need to be mocked.
+To do this we use the mockito.
+Example code:
+Mockito.when(itemRepo.existsById(106)).thenReturn(false);
+Mockito.when(itemRepo.save(item)).thenReturn(item);
+
+we are returning false for existsById as it has a boolean return type and 106 id does not exist yet
+we are returning item for save as the save returning the persisted item.
+
+By using the mocking we are only testing service and assuming that repo is not being tested. if we dont do this, it is not unit testing. it will be integrated testing.
+
+<code>
+package com.example.test;
+
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import com.example.dao.ItemRepository;
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+import com.example.service.ItemService;
+import com.example.service.ItemServiceImpl;
+
+
+@SpringJUnitConfig
+public class ItemServiceUnitTest {
+	@TestConfiguration
+	static class TestComfigurationClass{
+		@Bean
+		public ItemService itemService() {
+			return new ItemServiceImpl();
+		}
+	}
+	@MockBean
+	private ItemRepository itemRepo;
+	@Autowired
+	ItemService itemService;
+	private List<Item> testData;
+	@BeforeEach
+	public void setUp() {
+		testData = Arrays.asList(
+				new Item[] {
+						new Item(101, "Rice Bag", LocalDate.now(), true, "BAG", 1024.0, 2024.0),
+						new Item(102, "Sugar Bag", LocalDate.now(), true, "BAG", 3024.0, 4024.0),
+						new Item(103, "Channa Bag", LocalDate.now(), true, "PACKET", 1024.0, 2024.0),
+						new Item(104, "Wheat Bag", LocalDate.now(), true, "BAG", 5024.0, 7024.0),
+						new Item(105, "Urdh Bag", LocalDate.now(), true, "PACKET", 204.0, 524.0)
+				}
+		);
+	}
+	@AfterEach
+	public void tearDown() {
+		testData = null;
+	}
+	@Test
+	public void whenAdd_givenNonExistingRecord_test() {
+		Item item = new Item(105, "Urdh Bag", LocalDate.now(), true, "PACKET", 204.0, 524.0);
+		Mockito.when(itemRepo.existsById(106)).thenReturn(false);
+		Mockito.when(itemRepo.save(item)).thenReturn(item);
+		try {
+			assertEquals(itemService.add(item), item);
+		} catch (ImsException e) {
+			// TODO Auto-generated catch block
+			fail(e.getMessage());
+		}
+	}
+	@Test
+	public void whenAdd_givenExistingRecord_test() {
+		Item item = testData.get(0);
+		Mockito.when(itemRepo.existsById(item.getIcode())).thenReturn(true);
+		Mockito.when(itemRepo.save(item)).thenReturn(item);
+		assertThrows(ImsException.class, () -> {itemService.add(item);});
+	}
+	@Test
+	public void whenGetItemById_givenExistingIcode_test() throws ImsException {
+		Item item = testData.get(0);
+		Mockito.when(itemRepo.findById(item.getIcode())).thenReturn(Optional.ofNullable(item));
+		assertEquals(itemService.getItemById(item.getIcode()), item);
 	}
 	
 }
+
 
 </code>
 
 
 
 
-We will create .data file that will contain some data which will be inserted into the database so that we can perform queries and tests on this data.
+
+Integration test:
+-----------------
+To perform Integration test we will not use the mock database but instead, we will use the original database itself.
+
+For integration test, we use the @SpringBootTest Annotation
+We will also remove the Mockito Stuff, TestConfiguration class and perform the tests.
+
+<code>
+package com.example.test;
+
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import com.example.dao.ItemRepository;
+import com.example.entity.Item;
+import com.example.exception.ImsException;
+import com.example.service.ItemService;
 
 
+@ActiveProfiles("test")
+@SpringBootTest
+public class ItemServiceIntegrationTest {
+	@Autowired
+	private ItemRepository itemRepo;
+	@Autowired
+	ItemService itemService;
+	private List<Item> testData;
+	@BeforeEach
+	public void setUp() {
+		testData = Arrays.asList(
+				new Item[] {
+						new Item(101, "Rice Bag", LocalDate.now(), true, "BAG", 1024.0, 2024.0),
+						new Item(102, "Sugar Bag", LocalDate.now(), true, "BAG", 3024.0, 4024.0),
+						new Item(103, "Channa Bag", LocalDate.now(), true, "PACKET", 1024.0, 2024.0),
+						new Item(104, "Wheat Bag", LocalDate.now(), true, "BAG", 5024.0, 7024.0),
+						new Item(105, "Urdh Bag", LocalDate.now(), true, "PACKET", 204.0, 524.0)
+				}
+		);
+		for(Item item: testData) {
+			itemRepo.saveAndFlush(item);	
+		}
+	}
+	@AfterEach
+	public void tearDown() {
+		itemRepo.deleteAll();
+		testData = null;
+	}
+	@Test
+	public void whenAdd_givenNonExistingRecord_test() {
+		Item item = new Item(106, "Urdh Bag", LocalDate.now(), true, "PACKET", 204.0, 524.0);
+		try {
+			assertEquals(itemService.add(item), item);
+		} catch (ImsException e) {
+			// TODO Auto-generated catch block
+			fail(e.getMessage());
+		}
+	}
+	@Test
+	public void whenAdd_givenExistingRecord_test() {
+		Item item = testData.get(0);
+		assertThrows(ImsException.class, () -> {itemService.add(item);});
+	}
+	@Test
+	public void whenGetItemById_givenExistingIcode_test() throws ImsException {
+		Item expectedItem = testData.get(0);
+		Item actualItem = itemService.getItemById(expectedItem.getIcode());
+		System.out.println("Actual Item: "+actualItem);
+		assertEquals(actualItem.getIcode(), expectedItem.getIcode());
+	}
+}
 
 
-
+</code>
 
 
 Spring Security:
