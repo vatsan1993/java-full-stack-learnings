@@ -4530,16 +4530,94 @@ Always gets the dependency directly from the central repository as the dependenc
 Avoid using snapshot version.
 
 Maven Multi-Module Project:
-Can have a parent project controlling multiple child project
+Can have a parent project controlling multiple child projects
+Based on pom.xml
+
+The parent project will have its own pom.xml
+Then we can create multiple independent projects that acts like the child.
+The child project pom can have inheritance or aggregation relation with the parent pom.xml.
+
+In inheritance, all common dependencies can be stored in parent. 
+Note: The parent pom is only a reference and it will not be running artifact.
+
+In aggregation, activities can be intiated in the parent project. We dont need to go to the child project and initiate it.
+
+If we have 20 projects , we dont need to perform build operation for each project. we can aggregate these projects into a single parent project and we can initiate a build on the parent.
+
+This reduces duplication.
+Can help run single command to perform multiple operations.
 
 
+let create a maven project.
+<code>
+mvn archetype:generate -DgroupId=com.example -DartifactId=maven-parent-project
+</code>
+This will create a project and a pom.xml file with effective pom.xml.
 
+Now we need to make the parent project not runnable.
+we have the packaging tag with pom inside it.
 
+<code>
+<packaging>pom</packaging>
+</code>
 
+Now lets create the child projects. These are going to be inside the parent project's folder.
+<code>
+cd maven-parent-project
+mvn archetype:generate -DgroupId=com.example -DartifactId=maven-sub-module1
+mvn archetype:generate -DgroupId=com.example -DartifactId=maven-sub-module2
+mvn archetype:generate -DgroupId=com.example -DartifactId=maven-sub-module3
+</code>
+now in the parent's pom.xml we will see a new tag called modules
+<code>
+  <modules>
+    <module>maven-sub-module1</module>
+    <module>maven-sub-module2</module>
+    <module>maven-sub-module3</module>
+  </modules>
+  
+</code>
 
+This is basically aggregation and generated automatically in the parent.
+The parent project is registering all the sub modules automatically.
 
+Now we can perform the build on the parent, it will build the chold projects aswell.
 
+<code>
+	mvn clean package
+</code>
+we will see that it keeps track of all the sub modules aswell and perform the build.
+we will see target folder in each project.
+we will also see a tag in each child that tell what is the parent project
+<code>
+  <parent>
+    <artifactId>maven-parent-project</artifactId>
+    <groupId>com.example</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
 
+</code>
 
+This is inheritance.
+All plugins from parent project willl be inherited by the child project.
+By default both the aggregation and inheritance is implemented in the projects.
+if we want only one relationship, we can remove the respective tag .
+This is basically how our spring-boot project works as it has parent tag specified.
 
+Maven vs Gradle:
+Maven:
+	Maven is not the only project management tool we have. we also have gradle
+	Maven is more generalized . less customizations
+	Uses xml for the config
+	build phases are linear. first clean the project, then test, then package it. it cannot be reordered.
+	maven does not help you take full advantage of the ide that you are using. This is one of the reasons why we use eclipse for the whole time.
+	maven creates a lot of conflicts while using dependencies. some times we might need to go to the .m2 folder and perform some deletions when the dependency is not properly downloaded. This makes the dependency corrupt and it will not be auto downloaded to fix the issue. This has to be done manually.
 
+Gradle:
+	Gradle inspired from Maven.But has more customizations. For example, gradle can be specifically customised for web, mobile and so on. It is built to overcome the drawbacks of maven.
+	Uses domain specific language for config. It is based on Groovy.
+	Lot of config code is reduced.
+	The phases can be done in any order. Graph based.
+	Gradle on the other hand provides a lot more customization so that it can take full advantage of the ide that you want to make use of.
+	for example, if we want to create the jsp files in specific locations of our project, then we can customize it.
+	gradle manages the dependencies efficiently.

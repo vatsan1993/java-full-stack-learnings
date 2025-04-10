@@ -2,8 +2,8 @@
 <section name="Workbench">
 	<section name="MavenProjectWizardLocationPage">
 		<list key="location">
-			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/spring-web-mvc-demo1"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/car-enquiry"/>
+			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/spring-web-mvc-demo1"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/jpa-hibernate-demo-6"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/jpa-hibernate-demo-5"/>
 			<item value="/home/vastan1993/Desktop/wellsforgo/java projects/jpa-hibernate-demo-4"/>
@@ -18,6 +18,7 @@
 		</list>
 	</section>
 	<section name="MavenProjectWizardArchetypePage">
+		<item key="catalog" value="All Catalogs"/>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
 			<item value="[artifactId]-TRUNK"/>
@@ -48,23 +49,13 @@
 	</section>
 	<section name="MavenProjectWizardArtifactPage">
 		<list key="groupId">
-			<item value="com.exampe"/>
 			<item value="com.example"/>
 		</list>
 		<list key="name">
-			<item value="spring-web-mvc-demo"/>
-			<item value="spring-web-mvc-demo1"/>
-			<item value="SpringCoreDemoXml"/>
-			<item value="JpaHibernateDemo5"/>
+			<item value="MavenDemoProject"/>
 		</list>
 		<list key="artifactId">
-			<item value="spring-web-mvc-demo"/>
-			<item value="spring-web-mvc-demo1"/>
-			<item value="spring-core-demo-xml"/>
-			<item value="jpa-hibernate-demo7"/>
-			<item value="jpa-hibernate-demo-6"/>
-			<item value="jpa-hibernate-demo-5"/>
-			<item value="jpa-hibernate-demo-4"/>
+			<item value="maven-demo-project"/>
 		</list>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
@@ -127,5 +118,7 @@
 			<item value="[groupId].[artifactId]-[version]"/>
 			<item value="[name]"/>
 		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.ui.internal.wizards.CustomArchetypeDialog">
 	</section>
 </section>
