@@ -6,12 +6,51 @@
 table names are plural
 
 # maven
-Create Maven project
+Maven is a plugin based project management tool.
+helps to build apps faster.
+We can install plugins and dependencies and also manage the project using maven.
+To manage all the plugins and dependencies, we have a pom.xml file
 
-Maven Dependencies
+To create a maven project we have an option in eclipse that we can make use of.
+To do this we need to provide a lot of things like artifactId, groupId, version, name, description, so on.
+groupId needs to be like com.example
+artifactId needs to be like project-name
+Once we create a project we will see a pom.xml file in the project.
+We can use the pom.xml file to add dependencies, plugins
+
+Example Dependency:
+<dependencies>
+    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>8.3.0</version>
+    </dependency>
+</dependencies>
+
+Example Plugins
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <!-- Using the variables to change the default configuration of maven compiler. -->
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+            </plugin>
+        </plugins>
+    </build>
 
 
-
+Note: we can get the dependencies and plugins from the maven dependency online repository.
 
 # JDBC:
 
@@ -85,7 +124,7 @@ resources
 3. in dao create a ConnectionFactory class with a static method that returns a connection object.
 4. Create Interface for each entity class with abstracts methods that specify the operations we will be performing. We do this as In the future instead of using the queries, we will switch to Hybernate or JPA
 5. Each method should throw the custom exception.
-6. Create a class for jdbc implementation for the method we specified in the interface . If hybernate is used there will be another class which will have the implementation using hybernate.
+6. Create a class for jdbc implementation for the method we specified in the interface . If hibernate is used there will be another class which will have the implementation using hibernate.
 7. for jdbc implementation, create all the commands we need as constants at the top of the class and then implement the methods.
 8. Create a Service Interface that will contain the methods needed to interact with the Dao and do some extra stuff like validations.
 9. Create a Service class that implements all the methods by calling the dao ,methods and performing validations. Add mode methods here if needed. Todo this a dao object is necessary for this.
@@ -149,7 +188,7 @@ Needs dependecies and plugins:
             </plugin>
         </plugins>
     </build>
------------------
+-------------------
 # Servlets and JSP
 ----------------
 Servlet is a java program that can receive a request and send a response. This is used to create backend apps.
@@ -161,7 +200,7 @@ javax.servlet
 	ServletConfig
 	ServletRequest
 	ServletResponse
-	Abstact Class
+	Abstract Class
 	GenericServlet
 	
 javax.servlet.http
@@ -202,6 +241,7 @@ the war file will have the same name as the project name.
 We can have multiple webapps on a single server with different port numbers.
 
 # Tomcat Folder Structure
+------------------------------
 bin - contains bash or sh files to start or stop tomcat server.
 conf - contains configurations for the webservers.
 lib -jar files exists here
@@ -4400,6 +4440,97 @@ Thime Leaf with bootstrap:
 
 
 
+Maven In depth:
+---------------
+Project Management Tool
+
+Manages dependencies, plugins
+Build projects
+Structure your project.
+Documentation - Easy way to create documentations in our project
+Create Reports 
+Maintains Release cycle
+Distrubutions - creating single point access to multiple projects
+
+Support for maven
+1. Maven plugin in ide
+2. Spring Initializr
+3. Stand alone cli install.
+
+Stand alone setup:
+download maven from the websites and then setup the environment system path variable for it.
+M2_HOME - the folder where maven is downloaded and extracted. (parent folder for the bin)
+M2 - The bin folder.
+Then use it in the Path variable.
+
+We need this as we will use it with jenkins later.
+
+Maven Archtypes: predefined template to create a poject.
+
+GAV Coordinates (groupid, Atrtifactid, version): Helps to uniquely identify our project 
+
+Maven Project : we can do this using the ide or by using a command aswell
+maven-demo-project
+
+command syntax to create a maven project:
+mvn archetype:generate -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=com.example -DartifactId=maven-cmd-project
+
+This says use the archetype plugin to generate a project. and then we provide which archetype we need to make use of , the arifact id of the current project and the groupid of the project.
+
+
+pom.xml
+project object model.
+contains details of the project, gav co-ordinates , dependencies and plugins, project profile management and so on.
+
+There are 3 kinds of pom files.
+1. parent pom (maven inbuilt pom.xml default config)
+2. local pom: customizable pom
+3. effective pom : parent + local pom runtime pom
+
+
+
+Maven update: Helps to download the dependencies and plugins.
+To download the dependencies it first check the .m2 folder on your computer. If it is not available, then gets it from the remote central repository and stores it in the local repo.
+
+
+Scope:
+Specifies when a dependency needs to be available
+compiler - dependency is required at build, test and runtime. (default)
+test - dependency is required at the test.
+runtime- only at runtime.
+provided - build, test, runtime (will not be packaged with the project). It will be available in the java runtime environment itself in the webserver
+system - same as provided. build, test, runtime (will not be packaged with the project). Also will not be provided by the java runtime environment.
+we specify a url so that it will be downloaded as per the demand at runtime.
+
+
+Plugins:
+We get plugins for different Maven activity or tasks(caled GOALS).
+For examle mavin-war plugin in maven web project.
+
+For example:
+in mvn archetype:generate, generate is the goal.
+
+for each goal, we need a maven plugin.
+
+when we do mvn <goal>, maven searches in the effective pom.
+if its available,  then it uses the plugin to perform the task
+of it is not , then we wil get an error.
+
+we can also do it like
+mvn <plugin>:<goal>
+This will tell maven to use a specific plugin to do a task.
+if there is already a plugin available, then this command will override it.
+
+some example commands:
+mvn clean
+mvn package
+
+snapshot version:
+Always gets the dependency directly from the central repository as the dependency is under development instead of searching the local.
+Avoid using snapshot version.
+
+Maven Multi-Module Project:
+Can have a parent project controlling multiple child project
 
 
 
