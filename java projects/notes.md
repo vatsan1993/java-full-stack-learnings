@@ -1,3 +1,5 @@
+Need java 17 or 21 for jenkins
+
 # Installing spring tools suit
 
 
@@ -4621,3 +4623,106 @@ Gradle:
 	Gradle on the other hand provides a lot more customization so that it can take full advantage of the ide that you want to make use of.
 	for example, if we want to create the jsp files in specific locations of our project, then we can customize it.
 	gradle manages the dependencies efficiently.
+	
+	
+	
+	
+CI/CD:
+------
+Continuous Integration and Continuous Deployment
+The main goal of this is to achieve agile process. It is an iterative incremental model.
+With each interation, we get an incremental artifact.
+There are 2 aspects in this.
+1. Develomental team: Provide continuous incremental artifact/ updates in the project
+2. Now immediately we need to use this on multiple platforms like staging, testing, production so on.
+
+Traditionally this was done manually.
+Challenges when doing this manually:
+1. reconfigure the host machine. Manually update the computer.
+2. deploy , build, test, generate reports, analyse,....
+This slows down the project, creates conflicts and makes it not agile.
+
+CI/CD provide End to End Automation for this post development process and make it smooth and seamless.
+We will learn about two tools
+1. Docker
+2. Jenkins
+
+Jenkins:
+--------
+A tool that create a CI server for schedule and execution of jobs.
+Jobs could be any task that we want on the project as soon as it is commit to github or any other source control tool like build it, test the project, create a package, convert to a container, deploy it to a cloud provider.
+
+So jenkins a tool that can schedule these jobs on the project.
+So we specify when each of the job need to be performed and in which order,
+We can also configure it to automatically trigger a build, test and deploy it on the server.
+All this happen as soon as the commit is made.
+So the developers dont need to wait for test team to manually test the project and generate reports.s
+
+How jenkins works:
+Similar to maven, jenkins heavyly relies on plugins.
+1. We need to configure the plugins as per the requirement. 
+for example if we need the jenkins to create a docker container as soon as commit is made, then we need to configure accordingly. if we need testing the docker, then we configure differently. 
+2. Jenkins uses multiple Agents to perform a particular job. Once the agents are in place (plugins)
+3. Then we can schedule our jobs.
+
+
+Jenkins provides a browser based enviroment at port 8080.
+then it uses credentials.
+
+
+Jenkins installation:
+---------------------
+Download jenkins.
+During installation, select "Run service as LocalSystem"
+In the next step, check if port 8080 is available. If it is not available, setup a different port number or try to free port 8080
+Once the installation is done, open localhost:8080 in the browser
+Jenkins will open as a website.
+provide the admin password. The admin password will be available at the provided location.
+Provide the username and password for new admin user. you will need this to login to jenkins from next time.
+then setup the plug-in that you want. You can start with default plugins and download the ones you want later.
+
+Using Jenkins Dashboard:
+------------------------
+Once we are at the login screen we can see the logo of the jenkins which is a butler.
+Butler will do the jobs for us.
+In the dashboard we will mainly work with manage jenkins tab. Once we go there we can see there are so many options that we can make use of here.
+We have  plugins option where we can add, remove or update plugins or even upload a custom plugin if its not avaiable.
+We have 2 other options that we will mainly use. 
+System - helps to configure tools, their locations and automatic installers.
+
+Plugins necessary for maven based Spring projects
+java
+git
+maven integration
+
+if these are not available, you need to install them
+We need to then go to the  Tools configuration section to configure the tools	
+Here we wil find the setting to configure maven, jdk, git and other plugins.
+
+We need to configure these. so lets go to Tools configuration section.
+Then lets setup jdk.
+we need to provide jdk name and home directory location. we can also install it directly if jdk is not part of our computer.
+we will use other plugins like nodejs, docker, ant and many more depending on the project. We also have plugins for creating performance report and so on. you can explore the available plugins and see what you can make use of.
+Search google for popular jenkins plugins.
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
