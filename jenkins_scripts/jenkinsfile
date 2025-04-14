@@ -10,9 +10,9 @@ node{
 	stage("Build"){
 		dir("${PROJECT_DIR}") {
 			if(isUnix()){
-				sh "'${mvnHome}/bin/mvn'  clean package"
+				sh "'${mvnHome}'  clean package"
 			}else{
-				bat(/"${mvnHome}\bin\mvn" clean pacakge/)
+				bat(/"${mvnHome}/bin/mvn" clean pacakge/)
 			}
 		}
 	}
