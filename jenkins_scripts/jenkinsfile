@@ -12,7 +12,7 @@ node{
 			if(isUnix()){
 				sh "'${mvnHome}'  clean package"
 			}else{
-				bat(/"${mvnHome}/bin/mvn" clean pacakge/)
+				bat(/"${mvnHome}\bin\mvn" clean pacakge/)
 			}
 		}
 	}
