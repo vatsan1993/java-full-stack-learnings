@@ -4705,6 +4705,34 @@ we need to provide jdk name and home directory location. we can also install it 
 we will use other plugins like nodejs, docker, ant and many more depending on the project. We also have plugins for creating performance report and so on. you can explore the available plugins and see what you can make use of.
 Search google for popular jenkins plugins.
 
+Creating A job:
+---------------
+In the dashboard, we will see new item button that we can make use of. 
+
+provide a name
+Then choose one of the options shown.
+Lets seelct free style project.
+Now we can configure the job.
+Selecting the github project, it will show the repo url .
+You can explore all other options available.
+
+Alternatively, we can create a jenkins scipt file that contains all the config that we might need to create the jenkins job.
+the jenkins scripts can be created without any extensions.
+It can be part of the project that we are working with or it can be outside but it has to be on a gir repository.
+it should be named jenkinsfile.
+
+In this file, we will use the groovy based language to specify a pipeline which is a the flow of the activities that we want to perform.
+we define the things in a composition called node.
+we will have different functions called stages 
+Each stage can have one or more activities that we want to perform.
+The stages will execute in the order that they are provided.
+
+Each stage should have a name
+
+The first activity that we want to do is to read all the code from the git repository. we need to provide the git url and the branch properties 
+
+Then in the second stage we want to build the project.
+
 
 
 

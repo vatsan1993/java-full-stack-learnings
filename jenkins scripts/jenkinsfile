@@ -1,0 +1,15 @@
+node{
+	def mvnHome
+	stage('Checkout'){
+		git url: '/home/vastan1993/Desktop/wellsforgo/java projects/spring-web-mvc-demo', branch: 'main'
+		mvnHome = tool 'Local Maven'
+	}
+	
+	stage("Build"){
+		if(isUnix()){
+			sh "'${mvnHome}/bin/mvn'  clean package"
+		}else{
+			bat(/"${mvnHome}\bin\mvn" clean pacakge/)
+		}
+	}
+}
