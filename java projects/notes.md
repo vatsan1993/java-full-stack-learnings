@@ -4783,7 +4783,22 @@ we also have documentation that we can read and understand.
 
 if the build fails, we can see that in the console output or in pipeline steps.
 
+Build Trigger:
+--------------
+Although we used the jenkins file, the build process is still not automated.
+Lets automate the process.
+Lets go to the configure section . In build triggers let select build periodically.
+Now click on the question marks beside the schedule and documentation popsup.
+we have examples in there and we can use one of the exapmles.
+I am choosing 15 mins.
+As soon as we provide this we will see a text like "Would last have run at Tuesday, 15 April, 2025, 8:38:36 pm India Standard Time; would next run at Tuesday, 15 April, 2025, 8:53:36 pm India Standard Time.",
+Save the config.
+from now the build happens in every 15 mins
+Lets say we made changes in the code and commited the changed within that 15 mins. then what happens?
+It will take only commited in the last commit not the new ones. the new ones will be taken only in the next build.
 
+There is another trigger model called github hook.
+This is trigger a build when a commit is made.
 
 
 
