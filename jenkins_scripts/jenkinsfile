@@ -1,19 +1,19 @@
-node{
-	def mvnHome
-	def PROJECT_DIR
-	stage('Checkout'){
-		git url: 'https://github.com/vatsan1993/java-full-stack-learnings.git', branch: 'main'	
-		mvnHome = tool 'Local Maven'
-		PROJECT_DIR = 'java projects/spring-web-mvc-demo'
-	}
-	
-	stage("Build"){
-		dir("${PROJECT_DIR}") {
-			if(isUnix()){
-				sh "'${mvnHome}'  clean package"
-			}else{
-				bat(/"${mvnHome}\bin\mvn" clean pacakge/)
-			}
-		}
-	}
+node {
+    def mvnHome = tool 'Local Maven'
+    def GIT_REPO_PATH = '/home/vastan1993/Desktop/wellsforgo'
+    def PROJECT_DIR = 'java projects/spring-web-mvc-demo'
+
+    stage('Checkout') {
+        git url: "file://${GIT_REPO_PATH}", branch: 'main'
+    }
+
+    stage('Build') {
+        dir("${PROJECT_DIR}") {
+            if (isUnix()) {
+                sh "'${mvnHome}' clean package"
+            } else {
+                bat(/"${mvnHome}\bin\mvn" clean package/)
+            }
+        }
+    }
 }
