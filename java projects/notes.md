@@ -4797,9 +4797,29 @@ from now the build happens in every 15 mins
 Lets say we made changes in the code and commited the changed within that 15 mins. then what happens?
 It will take only commited in the last commit not the new ones. the new ones will be taken only in the next build.
 
+We can access the workspace directory from both jenkins web portal and also locally. This is where the projects are copied from github and then build process is completed . This will generate the target folder. 
+
 There is another trigger model called github hook.
 This is trigger a build when a commit is made.
+we will switch of build periodically 
+then we need to create a hook in the git repo directory on our local computer.
+We genrally have a .git folder available for us.
+inside that we wil have a folder called hooks.
+we can see there are a lot of .sample files available for us.
+we can use these as templates to create the hooks that we want.
+we need to create a post-commit hook.There is no sample available for us.
+The name of the file will be post-commit. We dont need any extensions on it.
+In this file, we need to put a curl command. Jenkins automatically supports the curl command. we dont need to do anything specific.
+<code>
+#!/bin/sh
+curl http://localhost:8080/git/notifyCommit?url=https://github.com/vatsan1993/java-full-stack-learnings
+</code>
+this curl command send a notification to jenkins server when there is a commit that is made in the provided git repo.
 
+then we use github hook trigger option in jenkins dashboard.
+we will see a new option available on the jenkins dashboard called Github hook log.
+
+Now we change the project and perform a commit.
 
 
 
