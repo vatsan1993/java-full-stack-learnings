@@ -2,8 +2,7 @@ node{
 	def mvnHome
 	def PROJECT_DIR
 	stage('Checkout'){
-		//git url: 'https://github.com/vatsan1993/java-full-stack-learnings.git', branch: 'main'
-		git url: 'file:///home/vastan1993/Desktop/wellsforgo', branch: 'main'
+		git url: 'https://github.com/vatsan1993/java-full-stack-learnings.git', branch: 'main'	
 		mvnHome = tool 'Local Maven'
 		PROJECT_DIR = '/java projects/spring-web-mvc-demo'
 	}
