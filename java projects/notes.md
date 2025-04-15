@@ -4711,14 +4711,24 @@ In the dashboard, we will see new item button that we can make use of.
 
 provide a name
 Then choose one of the options shown.
-Lets seelct free style project.
+Lets select free style project.
 Now we can configure the job.
 Selecting the github project, it will show the repo url .
 You can explore all other options available.
+Some of the important things that we will work with are the environment, build steps, post build actions.
+
+lets select invoke top-level-maven targets
+we will select Local Maven for maven version.
+Then in the goals we provide clean test package
+jenkins will automatically call these commands one after the other.
+Under  Post-build Actions we have a lot of different actions that we can perform.
+We can extends the goals tasks and actions when we install more plugins.
+for example, we can install plugins to publish javadocs. publish repost, enable email notification, and so on.
+we will checkout the plugins later.
 
 Alternatively, we can create a jenkins scipt file that contains all the config that we might need to create the jenkins job.
 the jenkins scripts can be created without any extensions.
-It can be part of the project that we are working with or it can be outside but it has to be on a gir repository.
+It can be part of the project that we are working with or it can be outside but it has to be on a git repository.
 it should be named jenkinsfile.
 
 In this file, we will use the groovy based language to specify a pipeline which is a the flow of the activities that we want to perform.
@@ -4732,6 +4742,46 @@ Each stage should have a name
 The first activity that we want to do is to read all the code from the git repository. we need to provide the git url and the branch properties 
 
 Then in the second stage we want to build the project.
+
+<code>
+node{
+	def mvnHome
+	def PROJECT_DIR
+	stage('Checkout'){
+		git url: 'https://github.com/vatsan1993/java-full-stack-learnings.git', branch: 'main'
+		mvnHome = tool 'Local Maven'
+		PROJECT_DIR = 'java projects/spring-web-mvc-demo'
+	}
+	stage("Build"){
+		dir("${PROJECT_DIR}") {
+			if(isUnix()){
+				sh "'${mvnHome}'  clean package"
+			}else{
+				bat(/"${mvnHome}\bin\mvn" clean pacakge/)
+			}
+		}
+	}
+}
+
+</code>
+
+
+we can then push the code to git.
+Then we can go to jenkins and configure the item pipeline.
+We have to change the scm to git.
+Then we provide the repository url and the script path.
+
+Note: before we build the broject in jenkins, we need to verify if it is building locally.
+lets use mvn clean in the project folder. if there are aby build errors, we need to fix them and then push it to git before we build the project on the jenkins
+
+Then we build the project.
+
+we can also generate these code for the stages and steps that we need.
+When we select the pipeline project, we will see there is a pipeline syntax tab on the left. we can use that and generate the skeleton code.
+we also have documentation that we can read and understand.
+
+
+if the build fails, we can see that in the console output or in pipeline steps.
 
 
 
