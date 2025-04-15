@@ -4,7 +4,7 @@ node{
 	stage('Checkout'){
 		git url: 'https://github.com/vatsan1993/java-full-stack-learnings.git', branch: 'main'	
 		mvnHome = tool 'Local Maven'
-		PROJECT_DIR = '/java projects/spring-web-mvc-demo'
+		PROJECT_DIR = 'java projects/spring-web-mvc-demo'
 	}
 	
 	stage("Build"){
