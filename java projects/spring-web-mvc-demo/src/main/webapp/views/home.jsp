@@ -3,7 +3,7 @@
 		<title>My Spring Web</title>
 	</head>
 	<body>
-		<h1>Welcome Home! new content added.</h1>
+		<h1>Welcome Home! content changed 1</h1>
 	</body>
 
 </html>
