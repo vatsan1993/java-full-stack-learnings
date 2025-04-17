@@ -4771,8 +4771,10 @@ Then we can go to jenkins and configure the item pipeline.
 We have to change the scm to git.
 Then we provide the repository url and the script path.
 
-Note: before we build the broject in jenkins, we need to verify if it is building locally.
-lets use mvn clean in the project folder. if there are aby build errors, we need to fix them and then push it to git before we build the project on the jenkins
+Note: before we build the project in jenkins, we need to verify if it is building locally.
+lets use mvn clean in the project folder. if there are aby build errors, we need to fix them 
+then remove the target folder that is generated and push it to github.
+then push it to git before we build the project on the jenkins
 
 Then we build the project.
 
