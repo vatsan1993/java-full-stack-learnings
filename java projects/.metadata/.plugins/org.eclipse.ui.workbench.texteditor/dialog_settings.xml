@@ -10,6 +10,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="git"/>
 			<item value="maven-war-plugin"/>
 			<item value="war-pl"/>
 			<item value="war"/>
@@ -24,7 +25,6 @@
 			<item value="delete"/>
 			<item value="@Valid"/>
 			<item value="@ModelAttr"/>
-			<item value="ModelAttr"/>
 		</list>
 		<list key="replacehistory">
 		</list>

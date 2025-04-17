@@ -4769,7 +4769,7 @@ node{
 we can then push the code to git.
 Then we can go to jenkins and configure the item pipeline.
 We have to change the scm to git.
-Then we provide the repository url and the script path.
+Then we provide the repository url and the script path of the jenkins file.
 
 Note: before we build the project in jenkins, we need to verify if it is building locally.
 lets use mvn clean in the project folder. if there are aby build errors, we need to fix them 
@@ -4802,6 +4802,7 @@ It will take only commited in the last commit not the new ones. the new ones wil
 We can access the workspace directory from both jenkins web portal and also locally. This is where the projects are copied from github and then build process is completed . This will generate the target folder. 
 
 There is another trigger model called github hook.
+Note: this process will only work if we are using a local git repo.
 This is trigger a build when a commit is made.
 we will switch of build periodically 
 then we need to create a hook in the git repo directory on our local computer.
@@ -4814,18 +4815,21 @@ The name of the file will be post-commit. We dont need any extensions on it.
 In this file, we need to put a curl command. Jenkins automatically supports the curl command. we dont need to do anything specific.
 <code>
 #!/bin/sh
-curl http://localhost:8080/git/notifyCommit?url=https://github.com/vatsan1993/java-full-stack-learnings
+curl http://localhost:8080/git/notifyCommit?url=https://github.com/vatsan1993/java-full-stack-learnings.git
 </code>
 this curl command send a notification to jenkins server when there is a commit that is made in the provided git repo.
 
-then we use github hook trigger option in jenkins dashboard.
+then we use github hook trigger option in jenkins dashboard. and the poll scm otion
 we will see a new option available on the jenkins dashboard called Github hook log.
 
 Now we change the project and perform a commit.
 
 
 
-	
+Using Programmatic approach to create jobs
+DSL- groovy
+Can create this script inside the project or ouside the project
+
 
 
 
