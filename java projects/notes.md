@@ -4825,12 +4825,114 @@ we will see a new option available on the jenkins dashboard called Github hook l
 Now we change the project and perform a commit.
 
 
+In the post build process we can enable to send email request.
+To do this, we need a plugin. Email Extension.
+If it is not already available, download it.
+Then we need to Configure system
 
-Using Programmatic approach to create jobs
-DSL- groovy
-Can create this script inside the project or ouside the project
+
+# Docker: Containerization
+------------------------
+Docker exists to solve one main problem of cicd pipeline.
+pipeline : works on my machine.
+All the configuration, dependencies are on dev machine.
+But when we move the project out of the dev machine and onto servers(staging, testing, production), we might have issues. The servers might have some incompatibilities. 
+Fixing this in traditional way was hard and timetaking.
+We want to automate this process aswell.
+
+In the old process we used to create VMS in the servers and configure them.
+Lets see how VMS are implemented.
+
+<img src ="./vm vs docker.jpeg">
+<br>
 
 
+Dedicated stack: 
+1. Occupy and Consume a specific amount of resource of host machime even if it is not in use.
+2. Cannot scaled up dynamically.
+3. Reconfigured on new instance/version of the artifact.
+
+Containerization:
+-------------------
+When the app is sent to server, not only the app is send but a whole environment is built around the app and is sent to the server.
+This is called a container.
+The container holds all environment details like binaries, dependencies, app.
+
+Then the cantainer can be used to launch the app on the fly. Everything is configured already.
+
+No need to create a dedicated stack.
+Consumes resources only when it is up and running. Releases the resources when it stops.
+Allows easily scale up/down applications.
+New artifacts will have pre-configured environment.
+We can install multiple containers.
+We can also install multiple instances of the same app.
+
+Docker is the tool that runs the containers for us.
+It has 2 aspects to it
+1. client -Helps to create the containers
+2. server - runs the container on the deployment machine.
+
+Docker is a linux based application.
+To run it on Windows, it uses hypervisor.
+
+
+Feature | Docker Container | Virtual Machine (VM)
+Architecture | Shares the host OS kernel | Includes a full OS with its own kernel
+Resource Usage | Lightweight (uses less memory and storage) | Heavy (requires more memory, disk space, CPU)
+Boot Time | Starts in seconds | Takes minutes to boot
+Isolation | Process-level isolation using namespaces and cgroups | Full isolation via hypervisor
+Performance | Near-native performance | Slight overhead due to the hypervisor
+Portability | Easy to move between environments | Less portable compared to containers
+Use Case | Ideal for microservices and CI/CD | Ideal for running different OSes or fully isolated environments
+Example | Running an app in a Node.js container | Running Windows OS on a Linux machine via VM
+
+
+We will run docker community edition (cient + server)
+docker also has a something called docker hub where we have a lot of pre-developed images.
+need to create free account.
+
+Docker Image - Blueprint for for docker container. Using this, a docker container will be created in the deployment machine.We will upload the image not the container.
+contains requirement, binaies , os, tomcat, instructions to run app
+it not a running instance of the application. 
+its like an installer which does not have all the files packaged with it. Like Visual Studio connect to the server and downloads all the files for hours.
+
+Docker Container - Runtime instance of the docker image. all the requirements are installed and the application starts running. when its not needed anymore it can be stopped.
+we can create multiple instances if needed.
+
+Docker Local repo: docker stores all the images that we have already used. If its not available it gets the images from docker hub which is online repo.
+
+
+Docker hub:
+online repo for docker images.
+it is divided into 2 parts.
+1. public repository
+	contains official images.
+	we can pull any image that we want and run it to create a docker container.
+2. private repository.
+	our own repo. we can create our own images to private repo and then in the deployment computer, we can pull it using the credentials.
+	
+
+As images are bundled with all the things necessary to run the app, we might think that we will have a huge image with us. 
+But docker images and containers are extremely lightweight.
+image will contain the bare minimum necessary to run the app. it will not have complete os. it will only have the main parts of a kernel needed to run the app.
+
+
+commands:
+docker images - lista all the images that we have on our computer.
+docker image rm -f <first_part_id>
+docker compose up - restart the docker container.
+docker compose down - shuts down the docker container.
+docker pull <image-name>:[tag/version] - downloads the official docker image
+Example:
+docker pull hello-world
+docker run name - runs a docker image
+docker ps - lists all containers
+ 
+
+nginx = docker's default web server. size 22mb
+we can download  mysql, mongo, openjdk....
+openjdk comes with linux and jdk combined.
+ 
 
 
 
