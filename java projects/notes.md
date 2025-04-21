@@ -4910,40 +4910,199 @@ it is divided into 2 parts.
 	we can pull any image that we want and run it to create a docker container.
 2. private repository.
 	our own repo. we can create our own images to private repo and then in the deployment computer, we can pull it using the credentials.
-	
 
 As images are bundled with all the things necessary to run the app, we might think that we will have a huge image with us. 
 But docker images and containers are extremely lightweight.
 image will contain the bare minimum necessary to run the app. it will not have complete os. it will only have the main parts of a kernel needed to run the app.
 
-
 commands:
+docker image related commands
+docker pull <image-name>:[tag/version] - downloads the official docker image
 docker images - lista all the images that we have on our computer.
-docker image rm -f <first_part_id>
+docker image rm -f <first_part_id> 
+-f is to force remove
+docker build -t <image-name>:[<tag-name>] <location of dockerfile> # we will learn this later.
+
+docker container related commands
+docker container run -p <host-port>:<exposed-port> imagename - runs a docker image. if the image is not available, it will be fetched. Stops the container after the process is finished.
 docker compose up - restart the docker container.
 docker compose down - shuts down the docker container.
-docker pull <image-name>:[tag/version] - downloads the official docker image
-Example:
-docker pull hello-world
-docker run name - runs a docker image
-docker ps - lists all containers
- 
+docker container ls - lists all containers
+
+docker ps - lists all containerss
+docker container prune - deletes all stopped containers.
+
+
+  
 
 nginx = docker's default web server. size 22mb
 we can download  mysql, mongo, openjdk....
 openjdk comes with linux and jdk combined.
+
+
+examples:
+docker pull hello-world:latest
+docker images
+
+docker container run hello-world
+docker container ls
+
+docker container up
+
  
+Creating a custom docker image:
+-------------------------------
+We need to create a script file that has the instructions on how to create the image.
+This file is called Dockerfile. No extensions.
+We can use this docker file to compose the image.
+Once the image is created, we will be able to launch the container.
+
+Lets see the commands that we use in the Dockerfile
+Lets assume we are given a computer without any software installed, the first thing that we will do is install the os. then we install the programming language, setup environment variables, install the packages, copy the program at a specific location and then run it.
+
+So in the script we have instructions/commands to install all the things necessary.and then package the program along with it.
+
+From command ==> used to setup the softwares. install os, jdk, web server, database server.
+
+Syntax:
+FROM <image-name>:[tag/version]
+
+RUN Command ==> config, setup env path,clean cache, update software, create folders, files at specific location
+
+Syntax:
+RUN <shell command>
+Example:
+RUN mkdir app
+
+COPY/ADD command ==> helps to copy files from dev machine into the image.
+
+
+EXPOSE Command
+when we use a container, the app's post number is accessible inside the container. To make it available to the deploment machine and the user who is working with the deployment machine, we need to expose the port so the the deployment machine knows where to send the incoming requests.
+The deployment machine can have its own port number.
+
+there are other command availlable that we will discuss. (CMD/WORkDIR).
+
+Lets create a simple web app that has one html file and containerize it.
+we need
+OS(linux)
+web server
+application
+deploy it on the web server
+
+To setup all this, we will create the html file, then we will create a docker file to configure the environment
+
+Step1:
+create index.html filewith the html code
+
+step2:
+create Dockerfile.
+
+step3:
+lets use the from command to install OS and webserver.
+We will fetch an image from the docker hub for nginx
+nginx image contains both alpine os and the nginx web server.
+
+step 4:
+copy the html file in the container's  webserver.
+
+Note: no need to use the expose command as nginx exposes port 80 by default
+html file:
+<code>
+<!DDOCTYPE html>
+<html>
+  <head>
+    <title>Web app on Docker</title>
+  </head>
+  <body>
+    <h1>Welcome to Web Application, I am running on Docker</h1>
+  </body>
+</html>
+</code>
 
 
 
+DockerFile
+<code>
+# install OS and web Server
+# nginx is a combo of alpine OS and nginx we server
+FROM nginx:latest
+
+# change the WORKINGDIR of the container to point to the folder where html files are stored.
+# this is similart to cd command
+# nginx is generally available at /usr/share/nginx inside the alpine linux.
+WORKDIR /usr/share/nginx/html
+
+# copy app code to this directory
+COPY index.html index.html
+# also can be written as COPY . . (copies everything from current local machine to container's current working directory)
+
+# nginx automatically exposes port 80 for us . so we dont need extra expose command 
+# other servers might expose a different port. so it is better to checkout the documentation for the corresponding documentations.
+
+</code>
+
+Step 5: Lets create docker image using the Dockerfile we created. To do this we will open terminal in the location where we have the docker file.
 
 
+<code>
+	docker build -t webapp1:test .
+</code>
+
+the dot representes that the Dockerfile is in the current folder.
+
+Step 6: Launch the image by using docker container run command
+we need to map the port exposed by nginx to a port that we want the website to work with. To do this, we will need to use the -p option.
 
 
+<code>
+	docker container run -p 9090:80  webapp1:test
+</code>
+
+This will start the os, and run the web server. 
+As it is running the web server, the container will not shut down like for the hello-world application. we will not be able to use the same terminal for other commands, we have to launch a new terminal.
+
+Step 7: lets open a new terminal window and lets list the containers.
+<code>
+	docker container ls
+</code>
+
+this shows the lot of info related to the containers that are running like continer id, image name, any command that the images use internally, when it is created, status, ports
+
+we will see that the container is running with port 9090 and the exposed port of web server is 80.
+
+Step 8:
+lets access the the container files in the docker desktop
+when we click on the container, we will have a lot of options there.
+we can switch to the files tab and will we see all the linux file system
+if we go to /usr/share/nginx/html, we can see the index.html file there.
+
+Step 9: launch web browser and lets use localhost:9090
+we can see the html file appearing there.
+We can also see the log messages in the terminal where it displays the requests that we get.
+
+Step 10: lets stop the container.
+<code>
+	docker container stop 42e
+</code>
+note: running container id keeps changing each time we run it.
+this will stop the container with an id that starts with 42e
+
+Step 10: lets remove all the stopped containers
+<code>
+	docker container prune 
+</code>
+
+Step 11: lets lauch the container in detached mode instead of default attacjed mode
+<code>
+	docker container run -d -p 9091:80 webapp1:test
+<code>
+
+this will not block the terminal
 
 
+we can connect the jenkins and docker so that the docker builds are triggered automatically. and create docaker image.
 
-
-
+Spring boot Restful Web App Docker and connecting to jenkins
 
 
