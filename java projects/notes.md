@@ -5103,6 +5103,32 @@ this will not block the terminal
 
 we can connect the jenkins and docker so that the docker builds are triggered automatically. and create docaker image.
 
+Project 2:
+----------
 Spring boot Restful Web App Docker and connecting to jenkins
+
+1.  Creating dockerfile
+OS 
+jdk
+database
+server is embedded.
+copy bundlled jar file to container
+run the jar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
