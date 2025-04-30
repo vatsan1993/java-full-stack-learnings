@@ -34,6 +34,7 @@ public class ItemServiceUnitTest {
 		@Bean
 		public ItemService itemService() {
 			return new ItemServiceImpl();
+			
 		}
 	}
 	

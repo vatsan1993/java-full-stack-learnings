@@ -162,4 +162,10 @@
 		<item key="DIALOG_HEIGHT" value="500"/>
 		<item key="DIALOG_FONT_NAME" value="1|Ubuntu|11.0|0|GTK|1|"/>
 	</section>
+	<section name="org.eclipse.jdt.internal.ui.dialogs.PackageSelectionDialog">
+		<item key="x" value="509"/>
+		<item key="y" value="68"/>
+		<item key="width" value="458"/>
+		<item key="height" value="510"/>
+	</section>
 </section>

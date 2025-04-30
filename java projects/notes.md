@@ -4785,6 +4785,7 @@ we also have documentation that we can read and understand.
 
 if the build fails, we can see that in the console output or in pipeline steps.
 
+
 Build Trigger:
 --------------
 Although we used the jenkins file, the build process is still not automated.
@@ -5118,6 +5119,39 @@ run the jar
 
 
 
+
+
+
+# generating junit test reports:
+-------------------------------
+uses xml format to display test reports.
+As juit is very popular, the saame format is used by other testing frameworks.
+so even if we are on a node project, we can use the same format.
+It is not easy to read the xml but jenkins can read it and understand it,
+
+In jenkins pipeline we want to publish the xml so that it shows if the tests were successful or of it failed.
+
+to do this we need to add post action and we want to do the action always and we provide the path of the xml file that has the test-results
+
+<code>
+post {
+	always {
+		junit 'test-result/junit.xml'
+	}
+}
+</code>
+We might see a message saying no duitable pulisher found.
+just refresh the page and you should see the test result section. you can build the project again and it should automatically show the reports there
+
+
+
+
+# node app
+
+
+
+Project :
+node junit tess
 
 
 

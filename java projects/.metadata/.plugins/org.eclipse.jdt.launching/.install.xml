@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dirs>
     <entry loc="/home/vastan1993/eclipse-jee-2024-12-R-linux-gtk-x86_64/eclipse/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.linux.x86_64_21.0.6.v20250130-0529/jre" stamp="1738707716762"/>
+    <entry loc="C:\Spring tools Suite\sts-4.30.0.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.6.v20250130-0529" stamp="1745699846788"/>
     <entry loc="/home/vastan1993/eclipse/eclipse/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.linux.x86_64_21.0.5.v20241023-1957/jre" stamp="1732786426000"/>
     <entry loc="/usr/lib/jvm/java-17-openjdk-amd64" stamp="1744314604047"/>
+    <entry loc="C:\Spring tools Suite\sts-4.30.0.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.6.v20250130-0529\jre" stamp="1745699841006"/>
+    <entry loc="C:\Program Files\Java\jdk-21" stamp="1745675382123"/>
     <entry loc="/usr/lib/jvm/java-21-openjdk-amd64" stamp="1744486465391"/>
     <entry loc="/usr/lib/jvm/jdk-22-oracle-x64" stamp="1717920381665"/>
     <entry loc="/home/vastan1993/eclipse/eclipse/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.linux.x86_64_21.0.5.v20241023-1957" stamp="1732786426000"/>
